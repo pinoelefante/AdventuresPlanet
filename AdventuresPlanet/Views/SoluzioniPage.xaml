@@ -53,7 +53,7 @@
             </controls:PageHeader.PrimaryCommands>
             
             <controls:PageHeader.SecondaryCommands>
-                <AppBarButton Label="Aggiorna" Command="{Binding AggiornaListaSoluzioni}" IsEnabled="{Binding IsCaricaSoluzioni, Converter={StaticResource NotBool}}"/>
+                <AppBarButton Label="Aggiorna" Command="{Binding AggiornaListaSoluzioni}" IsEnabled="{Binding IsCaricaSoluzioni, Converter={StaticResource NotBool}}" Visibility="{Binding IsSoluzioneSelezionata, Converter={StaticResource NotBoolVisibility}}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
 

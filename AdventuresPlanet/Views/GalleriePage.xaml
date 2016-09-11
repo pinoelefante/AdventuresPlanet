@@ -27,6 +27,9 @@
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
                 </AppBarButton>
             </controls:PageHeader.PrimaryCommands>
+            <controls:PageHeader.SecondaryCommands>
+                <AppBarButton Label="Aggiorna" Command="{Binding AggiornaCommand}" IsEnabled="{Binding IsCaricaGallerie, Converter={StaticResource NotBool}}" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource NotBoolVisibility}}"/>
+            </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
 
         <Grid Grid.Row="1" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource NotBoolVisibility}}">

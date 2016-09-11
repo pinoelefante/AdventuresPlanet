@@ -234,12 +234,18 @@ namespace AdventuresPlanet.ViewModels
             {
                 NavigationService.Navigate(typeof(Views.ImageViewerPage), x.ImageLink);
             }));
-        private DelegateCommand _shareCmd;
+        private DelegateCommand _shareCmd, _aggiornaCmd;
         public DelegateCommand CondividiCommand =>
             _shareCmd ??
             (_shareCmd = new DelegateCommand(() =>
             {
                 DataTransferManager.ShowShareUI();
+            }));
+        public DelegateCommand AggiornaCommand =>
+            _aggiornaCmd ??
+            (_aggiornaCmd = new DelegateCommand(() =>
+            {
+                AggiornaGallerie();
             }));
         private void OnShareRequested(DataTransferManager sender, DataRequestedEventArgs e)
         {

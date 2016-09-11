@@ -233,7 +233,7 @@ namespace AdventuresPlanet.ViewModels
                     {"Command", "Stop" }
                 });
             }));
-        private DelegateCommand _shareCmd;
+        private DelegateCommand _shareCmd, _aggiornaCmd;
         public DelegateCommand CondividiCommand =>
             _shareCmd ??
             (_shareCmd = new DelegateCommand(() =>
@@ -245,5 +245,11 @@ namespace AdventuresPlanet.ViewModels
             e.Request.Data.Properties.Title = $"Ascolta l'episodio {PodcastSelezionato.TitoloBG} del podcast Calavera Cafè";
             e.Request.Data.SetWebLink(new Uri($"{PodcastSelezionato.Link}"));
         }
+        public DelegateCommand AggiornaCommand =>
+            _aggiornaCmd ??
+            (_aggiornaCmd = new DelegateCommand(() =>
+            {
+                AggiornaPodcast();
+            }))
     }
 }

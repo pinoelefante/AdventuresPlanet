@@ -50,7 +50,11 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <controls:PageHeader Frame="{x:Bind Frame}"/>
+        <controls:PageHeader Frame="{x:Bind Frame}">
+            <controls:PageHeader.SecondaryCommands>
+                <AppBarButton Label="Aggiorna" Command="{Binding AggiornaCommand}" IsEnabled="{Binding IsCaricaPodcast, Converter={StaticResource NotBool}}" />
+            </controls:PageHeader.SecondaryCommands>
+        </controls:PageHeader>
         <ProgressRing Grid.Row="1"
                       Width="100"
                       Height="100"
