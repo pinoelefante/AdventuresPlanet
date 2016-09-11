@@ -42,7 +42,7 @@
         </Grid.RowDefinitions>
         <controls:PageHeader Frame="{x:Bind Frame}">
             <controls:PageHeader.PrimaryCommands>
-                <AppBarButton Label="Store" Foreground="White" Command="{Binding OpenStore}" Visibility="{Binding IsSoluzioneSelezionata, Converter={StaticResource BoolVisibility}}" IsEnabled="{Binding RecensioneSelezionata.LinkStore, Converter={StaticResource StringBool}}">
+                <AppBarButton Label="Store" Foreground="White" Command="{Binding OpenStore}" Visibility="{Binding IsSoluzioneSelezionata, Converter={StaticResource BoolVisibility}}" IsEnabled="{Binding SoluzioneSelezionata.LinkStore, Converter={StaticResource StringBool}}">
                     <AppBarButton.Icon>
                         <BitmapIcon UriSource="ms-appx:///Assets/icons/icon_buy.png"/>
                     </AppBarButton.Icon>
