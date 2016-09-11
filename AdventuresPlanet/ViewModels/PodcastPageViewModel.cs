@@ -13,6 +13,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 
@@ -233,7 +234,7 @@ namespace AdventuresPlanet.ViewModels
                     {"Command", "Stop" }
                 });
             }));
-        private DelegateCommand _shareCmd, _aggiornaCmd;
+        private DelegateCommand _shareCmd, _aggiornaCmd, _fbCmd, _tgCmd, _mailCmd;
         public DelegateCommand CondividiCommand =>
             _shareCmd ??
             (_shareCmd = new DelegateCommand(() =>
@@ -250,6 +251,24 @@ namespace AdventuresPlanet.ViewModels
             (_aggiornaCmd = new DelegateCommand(() =>
             {
                 AggiornaPodcast();
+            }));
+        public DelegateCommand FacebookCommand =>
+            _fbCmd ??
+            (_fbCmd = new DelegateCommand(async () =>
+            {
+                await Launcher.LaunchUriAsync(new Uri("https://www.facebook.com/calaveracafepodcast/"));
+            }));
+        public DelegateCommand TelegramCommand =>
+            _tgCmd ??
+            (_tgCmd = new DelegateCommand(async () =>
+            {
+                await Launcher.LaunchUriAsync(new Uri("https://telegram.me/calaveracafe"));
+            }));
+        public DelegateCommand EmailCommand =>
+            _mailCmd ??
+            (_mailCmd = new DelegateCommand(async () =>
+            {
+                await Launcher.LaunchUriAsync(new Uri("mailto:calaveracafe@adventuresplanet.it"));
             }));
     }
 }

@@ -51,6 +51,19 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <controls:PageHeader Frame="{x:Bind Frame}">
+            <controls:PageHeader.PrimaryCommands>
+                <AppBarButton Label="Facebook" Foreground="White" Command="{Binding FacebookCommand}">
+                    <AppBarButton.Icon>
+                        <BitmapIcon UriSource="ms-appx:///Assets/icons/facebook_icon.png"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="Telegram" Foreground="White" Command="{Binding TelegramCommand}">
+                    <AppBarButton.Icon>
+                        <BitmapIcon UriSource="ms-appx:///Assets/icons/telegram.png" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="Email" Icon="Mail" Foreground="White" Command="{Binding EmailCommand}"/>
+            </controls:PageHeader.PrimaryCommands>
             <controls:PageHeader.SecondaryCommands>
                 <AppBarButton Label="Aggiorna" Command="{Binding AggiornaCommand}" IsEnabled="{Binding IsCaricaPodcast, Converter={StaticResource NotBool}}" />
             </controls:PageHeader.SecondaryCommands>
