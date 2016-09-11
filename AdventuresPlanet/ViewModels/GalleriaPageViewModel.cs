@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Template10.Common;
 using Template10.Mvvm;
 using Utils;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
@@ -30,6 +31,7 @@ namespace AdventuresPlanet.ViewModels
                 ListaGallerie.Add(c.ToString(), new ObservableCollection<GalleriaItem>());
             Immagini = new ImagesCollection(m);
         }
+        private DataTransferManager _dataTransferManager;
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             Task taskAggiorna = null;
@@ -71,6 +73,8 @@ namespace AdventuresPlanet.ViewModels
                 }
             }
             NavigationService.FrameFacade.BackRequested += FrameFacade_BackRequested;
+            _dataTransferManager = DataTransferManager.GetForCurrentView();
+            _dataTransferManager.DataRequested += OnShareRequested;
         }
 
         private readonly static long TIME_UPDATE = 86400;//1 giorno
@@ -117,6 +121,7 @@ namespace AdventuresPlanet.ViewModels
         {
             pageState["GalleriaId"] = GalleriaSelezionata?.IdGalleria;
             NavigationService.FrameFacade.BackRequested -= FrameFacade_BackRequested;
+            _dataTransferManager.DataRequested += OnShareRequested;
             return base.OnNavigatedFromAsync(pageState, suspending);
         }
         private bool IsListaGallerieEmpty()
@@ -229,6 +234,18 @@ namespace AdventuresPlanet.ViewModels
             {
                 NavigationService.Navigate(typeof(Views.ImageViewerPage), x.ImageLink);
             }));
+        private DelegateCommand _shareCmd;
+        public DelegateCommand CondividiCommand =>
+            _shareCmd ??
+            (_shareCmd = new DelegateCommand(() =>
+            {
+                DataTransferManager.ShowShareUI();
+            }));
+        private void OnShareRequested(DataTransferManager sender, DataRequestedEventArgs e)
+        {
+            e.Request.Data.Properties.Title = $"Guarda le immagini di {GalleriaSelezionata.Titolo} su adventuresplanet.it";
+            e.Request.Data.SetWebLink(new Uri($"{AVPManager.URL_BASE}scheda_immagini.php?game={GalleriaSelezionata.IdGalleria}"));
+        }
         public class ImagesCollection : ObservableCollection<AdvImage>, ISupportIncrementalLoading
         {
             private AVPManager manager;

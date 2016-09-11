@@ -44,8 +44,18 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <controls:PageHeader Frame="{x:Bind Frame}" >
+            <controls:PageHeader.PrimaryCommands>
+                <AppBarButton Label="Store" Foreground="White" Command="{Binding OpenStore}" Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource BoolVisibility}}" IsEnabled="{Binding RecensioneSelezionata.LinkStore, Converter={StaticResource StringBool}}">
+                    <AppBarButton.Icon>
+                        <BitmapIcon UriSource="ms-appx:///Assets/icons/icon_buy.png"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="Condividi" Foreground="White" Command="{Binding CondividiCommand}" Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource BoolVisibility}}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
+                </AppBarButton>
+            </controls:PageHeader.PrimaryCommands>
             <controls:PageHeader.SecondaryCommands>
-                <AppBarButton Label="Aggiorna" Command="{Binding AggiornaListaRecensioni}" IsEnabled="{Binding IsCaricaRecensioni, Converter={StaticResource NotBool}}"/>
+                <AppBarButton Label="Aggiorna" Command="{Binding AggiornaListaRecensioni}" IsEnabled="{Binding IsCaricaRecensioni, Converter={StaticResource NotBool}}" Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource NotBoolVisibility}}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
         <ProgressRing Grid.Row="1"

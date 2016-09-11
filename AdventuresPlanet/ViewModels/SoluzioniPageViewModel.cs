@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Template10.Common;
 using Template10.Mvvm;
 using Utils;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Popups;
@@ -78,7 +79,10 @@ namespace AdventuresPlanet.ViewModels
             }
             
             NavigationService.FrameFacade.BackRequested += FrameFacade_BackRequested;
+            _dataTransferManager = DataTransferManager.GetForCurrentView();
+            _dataTransferManager.DataRequested += OnShareRequested;
         }
+        private DataTransferManager _dataTransferManager;
         private readonly static long TIME_UPDATE = 86400; //1 giorno
         private bool IsToUpdateByTime()
         {
@@ -118,6 +122,7 @@ namespace AdventuresPlanet.ViewModels
         {
             pageState["SoluzioneId"] = SoluzioneSelezionata?.Id;
             NavigationService.FrameFacade.BackRequested -= FrameFacade_BackRequested;
+            _dataTransferManager.DataRequested -= OnShareRequested;
             return base.OnNavigatedFromAsync(pageState, suspending);
         }
         private bool IsListaSoluzioniEmpty()
@@ -418,6 +423,25 @@ namespace AdventuresPlanet.ViewModels
                 ? (int)appData.Values[$"sol_pos_{SoluzioneSelezionata.Id}"]
                 : 0;
             RaisePropertyChanged(() => SoluzioneLoadPositionIndex);
+        }
+        private DelegateCommand _storeCmd, _shareCmd;
+        public DelegateCommand OpenStore =>
+            _storeCmd ??
+            (_storeCmd = new DelegateCommand(() =>
+            {
+                if (!string.IsNullOrEmpty(SoluzioneSelezionata.LinkStore))
+                    Launcher.LaunchUriAsync(new Uri(SoluzioneSelezionata.LinkStore));
+            }));
+        public DelegateCommand CondividiCommand =>
+            _shareCmd ??
+            (_shareCmd = new DelegateCommand(() =>
+            {
+                DataTransferManager.ShowShareUI();
+            }));
+        private void OnShareRequested(DataTransferManager sender, DataRequestedEventArgs e)
+        {
+            e.Request.Data.Properties.Title = $"Leggi la soluzione di {SoluzioneSelezionata.Titolo} su adventuresplanet.it";
+            e.Request.Data.SetWebLink(new Uri($"{AVPManager.URL_BASE}{SoluzioneSelezionata.Link}"));
         }
     }
     

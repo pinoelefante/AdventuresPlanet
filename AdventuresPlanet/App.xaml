@@ -77,6 +77,7 @@
             </conv:ValueWhenConverter>
 
             <utils:NullVisibility x:Key="NullVisibility"/>
+            <utils:StringBool x:Key="StringBool"/>
             <!--#endregion-->
         </ResourceDictionary>
     </Application.Resources>

@@ -21,7 +21,13 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <controls:PageHeader Frame="{x:Bind Frame}" />
+        <controls:PageHeader Frame="{x:Bind Frame}" >
+            <controls:PageHeader.PrimaryCommands>
+                <AppBarButton Label="Condividi" Foreground="White" Command="{Binding CondividiCommand}" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource BoolVisibility}}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
+                </AppBarButton>
+            </controls:PageHeader.PrimaryCommands>
+        </controls:PageHeader>
 
         <Grid Grid.Row="1" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource NotBoolVisibility}}">
             <ProgressRing IsActive="{Binding IsCaricaGallerie}"

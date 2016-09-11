@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Template10.Common;
 using Template10.Mvvm;
 using Utils;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
 using Windows.Storage;
@@ -33,10 +34,12 @@ namespace AdventuresPlanet.ViewModels
         private bool _caricaPodcast, _isPodcastPlaying;
         public bool IsCaricaPodcast { get { return _caricaPodcast; } set { Set(ref _caricaPodcast, value); } }
         public bool PlayerPlaying { get { return _isPodcastPlaying; } set { Set(ref _isPodcastPlaying, value); } }
-
+        private DataTransferManager _dataTransferManager;
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             NavigationService.FrameFacade.BackRequested += FrameFacade_BackRequested;
+            _dataTransferManager = DataTransferManager.GetForCurrentView();
+            _dataTransferManager.DataRequested += OnShareRequested;
             BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground;
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
             InitPlayer();
@@ -117,6 +120,7 @@ namespace AdventuresPlanet.ViewModels
         public override Task OnNavigatedFromAsync(IDictionary<string, object> state, bool suspending)
         {
             NavigationService.FrameFacade.BackRequested -= FrameFacade_BackRequested;
+            _dataTransferManager.DataRequested -= OnShareRequested;
             return base.OnNavigatedFromAsync(state, suspending);
         }
         private void FrameFacade_BackRequested(object sender, Template10.Common.HandledEventArgs e)
@@ -229,5 +233,17 @@ namespace AdventuresPlanet.ViewModels
                     {"Command", "Stop" }
                 });
             }));
+        private DelegateCommand _shareCmd;
+        public DelegateCommand CondividiCommand =>
+            _shareCmd ??
+            (_shareCmd = new DelegateCommand(() =>
+            {
+                DataTransferManager.ShowShareUI();
+            }));
+        private void OnShareRequested(DataTransferManager sender, DataRequestedEventArgs e)
+        {
+            e.Request.Data.Properties.Title = $"Ascolta l'episodio {PodcastSelezionato.TitoloBG} del podcast Calavera Cafè";
+            e.Request.Data.SetWebLink(new Uri($"{PodcastSelezionato.Link}"));
+        }
     }
 }

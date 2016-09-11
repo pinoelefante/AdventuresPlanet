@@ -68,7 +68,6 @@
         <!--#region Comandi player-->
         <Grid Grid.Row="2"
               Background="Black"
-              Opacity="0.9"
               Visibility="{Binding PodcastSelezionato, Converter={StaticResource NullVisibility}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -80,30 +79,47 @@
                        TextTrimming="CharacterEllipsis"
                        Margin="4,8"
                        Foreground="White"/>
-            
-            <StackPanel Grid.Row="1"
-                        Orientation="Horizontal"
-                        Margin="4,8">
-                
-                <Button Command="{Binding PlayerPlay}"
+            <Grid Grid.Row="1"
+                  Margin="4,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0"
+                            Orientation="Horizontal"
+                            Margin="4,8">
+
+                    <Button Command="{Binding PlayerPlay}"
                         Visibility="{Binding PlayerPlaying, Converter={StaticResource NotBoolVisibility}}">
-                    <SymbolIcon Symbol="Play"
+                        <SymbolIcon Symbol="Play"
                                 Foreground="White"/>
-                </Button>
-                
-                <Button Command="{Binding PlayerPause}"
+                    </Button>
+
+                    <Button Command="{Binding PlayerPause}"
                         Visibility="{Binding PlayerPlaying, Converter={StaticResource BoolVisibility}}">
-                    <SymbolIcon Symbol="Pause"
+                        <SymbolIcon Symbol="Pause"
                                 Foreground="White"/>
-                </Button>
-                
-                <Button Command="{Binding PlayerStop}"
+                    </Button>
+
+                    <Button Command="{Binding PlayerStop}"
                         IsEnabled="{Binding PlayerPlaying}"
                         Margin="4,0">
-                    <SymbolIcon Symbol="Stop"
+                        <SymbolIcon Symbol="Stop"
                                 Foreground="White"/>
-                </Button>
-            </StackPanel>
+                    </Button>
+                </StackPanel>
+
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal">
+                    <Button Command="{Binding CondividiCommand}"
+                            Margin="4,0">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;" Foreground="White"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            
         </Grid>
     </Grid>
 </Page>

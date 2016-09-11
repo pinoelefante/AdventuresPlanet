@@ -146,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\calavera_podcast.jpg" />
+    <Content Include="Assets\icons\icon_buy.png" />
     <Content Include="Assets\icons\icon-new.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\SplashScreenGrimFandango.scale-200.png" />
@@ -163,7 +164,6 @@
     <Content Include="Assets\Wide-310-150.scale-200.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="stop.mp3" />
-    <Content Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

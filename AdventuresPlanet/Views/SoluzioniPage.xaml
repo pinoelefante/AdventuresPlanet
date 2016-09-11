@@ -41,6 +41,17 @@
             <RowDefinition/>
         </Grid.RowDefinitions>
         <controls:PageHeader Frame="{x:Bind Frame}">
+            <controls:PageHeader.PrimaryCommands>
+                <AppBarButton Label="Store" Foreground="White" Command="{Binding OpenStore}" Visibility="{Binding IsSoluzioneSelezionata, Converter={StaticResource BoolVisibility}}" IsEnabled="{Binding RecensioneSelezionata.LinkStore, Converter={StaticResource StringBool}}">
+                    <AppBarButton.Icon>
+                        <BitmapIcon UriSource="ms-appx:///Assets/icons/icon_buy.png"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+                <AppBarButton Label="Condividi" Foreground="White" Command="{Binding CondividiCommand}" Visibility="{Binding IsSoluzioneSelezionata, Converter={StaticResource BoolVisibility}}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
+                </AppBarButton>
+            </controls:PageHeader.PrimaryCommands>
+            
             <controls:PageHeader.SecondaryCommands>
                 <AppBarButton Label="Aggiorna" Command="{Binding AggiornaListaSoluzioni}" IsEnabled="{Binding IsCaricaSoluzioni, Converter={StaticResource NotBool}}"/>
             </controls:PageHeader.SecondaryCommands>

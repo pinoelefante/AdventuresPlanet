@@ -8,7 +8,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Template10.Common;
 using Template10.Mvvm;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Popups;
 using Windows.UI.Text;
@@ -34,10 +36,13 @@ namespace AdventuresPlanet.ViewModels
             for (char c = 'A'; c <= 'Z'; c++)
                 ListaRecensioni.Add(c.ToString(), new ObservableCollection<RecensioneItem>());
         }
+        private DataTransferManager _dataTransferManager;
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             Task aggiornaTask = null;
             NavigationService.FrameFacade.BackRequested += FrameFacade_BackRequested;
+            _dataTransferManager = DataTransferManager.GetForCurrentView();
+            _dataTransferManager.DataRequested += OnShareRequested;
             if (IsListaRecensioniEmpty())
                 CaricaRecensioniDaDatabase();
             if (IsToUpdateByTime())
@@ -120,6 +125,7 @@ namespace AdventuresPlanet.ViewModels
         {
             pageState["RecensioneId"] = RecensioneSelezionata?.Id;
             NavigationService.FrameFacade.BackRequested -= FrameFacade_BackRequested;
+            _dataTransferManager.DataRequested -= OnShareRequested;
             return base.OnNavigatedFromAsync(pageState, suspending);
         }
         private void FrameFacade_BackRequested(object sender, Template10.Common.HandledEventArgs e)
@@ -408,6 +414,25 @@ namespace AdventuresPlanet.ViewModels
                 ? (int)appData.Values[$"rec_pos_{RecensioneSelezionata.Id}"]
                 : 0;
             RaisePropertyChanged(() => RecensioneLoadPositionIndex);
+        }
+        private DelegateCommand _storeCmd, _shareCmd;
+        public DelegateCommand OpenStore =>
+            _storeCmd ??
+            (_storeCmd = new DelegateCommand(() =>
+            {
+                if (!string.IsNullOrEmpty(RecensioneSelezionata.LinkStore))
+                    Launcher.LaunchUriAsync(new Uri(RecensioneSelezionata.LinkStore));
+            }));
+        public DelegateCommand CondividiCommand =>
+            _shareCmd ??
+            (_shareCmd = new DelegateCommand(() =>
+            {
+                DataTransferManager.ShowShareUI();
+            }));
+        private void OnShareRequested(DataTransferManager sender, DataRequestedEventArgs e)
+        {
+            e.Request.Data.Properties.Title = $"Leggi la recensione di {RecensioneSelezionata.Titolo} su adventuresplanet.it";
+            e.Request.Data.SetWebLink(new Uri($"{AVPManager.URL_BASE}{RecensioneSelezionata.Link}"));
         }
     }
 }

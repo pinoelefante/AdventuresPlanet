@@ -84,6 +84,12 @@
         </Grid.ColumnDefinitions>
         <controls:PageHeader Grid.Row="0" Grid.ColumnSpan="2" Frame="{x:Bind Frame}">
             <controls:PageHeader.PrimaryCommands>
+                <AppBarButton Icon="World" Label="Apri nel browser" Foreground="White" Command="{Binding OpenWebBrowserCommand}" Visibility="{Binding IsNewsSelezionata, Converter={StaticResource BoolVisibility}}"/>
+                <AppBarButton Label="Condividi" Command="{Binding ShareCommand}" Foreground="White" Visibility="{Binding IsNewsSelezionata, Converter={StaticResource BoolVisibility}}">
+                    <AppBarButton.Icon>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
                 
             </controls:PageHeader.PrimaryCommands>
         </controls:PageHeader>
@@ -107,7 +113,6 @@
         <Grid x:Name="gridNews" Grid.Row="1" Grid.Column="0" Visibility="{Binding IsNewsSelezionata, Converter={StaticResource BoolVisibility}}" Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition />
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <ProgressRing Width="100"
                           Height="100"
@@ -126,13 +131,6 @@
                     <ItemsControl ItemsSource="{Binding ListComponents}" Margin="8,16"/>
                 </StackPanel>
             </ScrollViewer>
-
-            <CommandBar Grid.Row="1">
-                <CommandBar.PrimaryCommands>
-                    <AppBarButton Icon="ReShare" Label="Condividi" Command="{Binding ShareCommand}"/>
-                    <AppBarButton Icon="World" Label="Apri nel browser" Command="{Binding OpenWebBrowserCommand}"/>
-                </CommandBar.PrimaryCommands>
-            </CommandBar>
         </Grid>
     </Grid>
 </Page>

@@ -83,6 +83,8 @@ namespace PodcastPlayer
                     break;
                 case "PlayOffline":
                     {
+                        if(mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
+                            mediaPlayer.Pause();
                         string path = e.Data["Path"].ToString();
                         string imageOF = e.Data["Thumb"].ToString();
                         int positionSec = (int)e.Data["Position"];
@@ -113,6 +115,8 @@ namespace PodcastPlayer
                     break;
                 case "PlayOnline":
                     {
+                        if (mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
+                            mediaPlayer.Pause();
                         string Url = e.Data["Url"].ToString();
                         string imageO = e.Data["Thumb"].ToString();
                         int positionSec = (int)e.Data["Position"];
