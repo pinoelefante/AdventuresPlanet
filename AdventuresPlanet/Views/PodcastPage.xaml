@@ -1,0 +1,109 @@
+﻿<Page x:Name="page"
+    x:Class="AdventuresPlanet.Views.PodcastPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AdventuresPlanet.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Template10.Controls"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    mc:Ignorable="d"
+    DataContext="{Binding PodcastPageVM, Source={StaticResource Locator}}">
+
+    <Page.Resources>
+        <DataTemplate x:Key="templatePodcast">
+            <RelativePanel>
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Tapped">
+                        <core:InvokeCommandAction Command="{Binding DataContext.PlayPodcast, ElementName=page}" CommandParameter="{Binding}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+                <Image x:Name="podImage"
+                       Source="{Binding Immagine}"
+                       Stretch="Uniform"
+                       MaxWidth="160"
+                       MaxHeight="160"
+                       Margin="0,4"
+                       RelativePanel.AlignLeftWithPanel="True"
+                       RelativePanel.AlignBottomWithPanel="True"
+                       RelativePanel.Below="podTitolo"/>
+                <TextBlock x:Name="podTitolo"
+                           Text="{Binding TitoloBG}"
+                           Style="{ThemeResource TitleTextBlockStyle}"
+                           TextWrapping="Wrap"
+                           RelativePanel.AlignTopWithPanel="True"/>
+                <TextBlock x:Name="podDescr"
+                           Text="{Binding Descrizione}"
+                           TextWrapping="Wrap"
+                           TextTrimming="CharacterEllipsis"
+                           Margin="4"
+                           MaxHeight="160"
+                           RelativePanel.RightOf="podImage"
+                           RelativePanel.Below="podTitolo"/>
+            </RelativePanel>    
+        </DataTemplate>
+    </Page.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader Frame="{x:Bind Frame}"/>
+        <ProgressRing Grid.Row="1"
+                      Width="100"
+                      Height="100"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Canvas.ZIndex="999"
+                      IsActive="{Binding IsCaricaPodcast}"
+                      Visibility="{Binding IsCaricaPodcast, Converter={StaticResource BoolVisibility}}"/>
+        
+        <!--#region Lista puntate-->
+        <ListView Grid.Row="1"
+                  ItemsSource="{Binding ListaPodcast}"
+                  ItemTemplate="{StaticResource templatePodcast}"/>
+        
+        <!--#region Comandi player-->
+        <Grid Grid.Row="2"
+              Background="Black"
+              Opacity="0.9"
+              Visibility="{Binding PodcastSelezionato, Converter={StaticResource NullVisibility}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="{Binding PodcastSelezionato.TitoloBG}"
+                       FontSize="16"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"
+                       Margin="4,8"
+                       Foreground="White"/>
+            
+            <StackPanel Grid.Row="1"
+                        Orientation="Horizontal"
+                        Margin="4,8">
+                
+                <Button Command="{Binding PlayerPlay}"
+                        Visibility="{Binding PlayerPlaying, Converter={StaticResource NotBoolVisibility}}">
+                    <SymbolIcon Symbol="Play"
+                                Foreground="White"/>
+                </Button>
+                
+                <Button Command="{Binding PlayerPause}"
+                        Visibility="{Binding PlayerPlaying, Converter={StaticResource BoolVisibility}}">
+                    <SymbolIcon Symbol="Pause"
+                                Foreground="White"/>
+                </Button>
+                
+                <Button Command="{Binding PlayerStop}"
+                        IsEnabled="{Binding PlayerPlaying}"
+                        Margin="4,0">
+                    <SymbolIcon Symbol="Stop"
+                                Foreground="White"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>

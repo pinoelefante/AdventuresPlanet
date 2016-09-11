@@ -1,0 +1,132 @@
+﻿<Page x:Name="page"
+    x:Class="AdventuresPlanet.Views.RecensioniPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AdventuresPlanet.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Template10.Controls"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    mc:Ignorable="d"
+    DataContext="{Binding RecensioniPageVM, Source={StaticResource Locator}}">
+
+    <Page.Resources>
+        <CollectionViewSource IsSourceGrouped="True" x:Key="RecensioniList" ItemsPath="Value" Source="{Binding ListaRecensioni}"/>
+
+        <DataTemplate x:Key="receList">
+            <Grid Margin="8,0">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Tapped">
+                        <core:InvokeCommandAction Command="{Binding DataContext.SelezionaRecensione, ElementName=page}" CommandParameter="{Binding}" />
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/><!-- icon new -->
+                    <ColumnDefinition Width="Auto"/><!-- icon preferita -->
+                    <ColumnDefinition /> <!-- nome -->
+                    <ColumnDefinition Width="Auto"/><!-- voto -->
+                </Grid.ColumnDefinitions>
+                <BitmapIcon Grid.Column="0" UriSource="/Assets/icons/icon-new.png" Visibility="{Binding IsNew, Converter={StaticResource BoolVisibility}}"/>
+                <SymbolIcon Grid.Column="1" Symbol="Favorite" Visibility="{Binding IsPreferita, Converter={StaticResource BoolVisibility}}"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                    <TextBlock Text="{Binding Titolo}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Stretch"/>
+                    <SymbolIcon Symbol="Video" Visibility="{Binding IsVideo, Converter={StaticResource BoolVisibility}}" Margin="4,0"/>
+                </StackPanel>
+                <TextBlock Grid.Column="3" Text="{Binding VotoText}"/>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:PageHeader Frame="{x:Bind Frame}" >
+            <controls:PageHeader.SecondaryCommands>
+                <AppBarButton Label="Aggiorna" Command="{Binding AggiornaListaRecensioni}" IsEnabled="{Binding IsCaricaRecensioni, Converter={StaticResource NotBool}}"/>
+            </controls:PageHeader.SecondaryCommands>
+        </controls:PageHeader>
+        <ProgressRing Grid.Row="1"
+                      IsActive="{Binding IsCaricaRecensioni}"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Width="100"
+                      Height="100"
+                      Visibility="{Binding IsCaricaRecensioni, Converter={StaticResource BoolVisibility}}"
+                      Canvas.ZIndex="999"/>
+        <!--#region Lista recensioni-->
+        <SemanticZoom Grid.Row="1">
+            <SemanticZoom.ZoomedInView>
+                <ListView ItemsSource="{Binding Source={StaticResource RecensioniList}}" ItemTemplate="{StaticResource receList}">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.GroupStyle>
+                        <GroupStyle HidesIfEmpty="True">
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Key}" Foreground="{StaticResource SystemControlForegroundAccentBrush}" FontSize="18" FontWeight="Bold" Padding="4" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                </ListView>
+            </SemanticZoom.ZoomedInView>
+            <SemanticZoom.ZoomedOutView>
+                <GridView ItemsSource="{Binding Source={StaticResource RecensioniList}, Path=CollectionGroups}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center">
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="3" MinHeight="52" MaxHeight="52" MinWidth="56" Padding="4" Margin="8" HorizontalAlignment="Center">
+                                <TextBlock Text="{Binding Group.Key}" FontSize="28" FontWeight="Light" HorizontalAlignment="Stretch" VerticalAlignment="Center" TextAlignment="Center" TextTrimming="CharacterEllipsis" TextWrapping="Wrap" Foreground="{StaticResource SystemControlForegroundAccentBrush}" />
+                            </Border>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </SemanticZoom.ZoomedOutView>
+        </SemanticZoom>
+        
+        <!--#region Recensione -->
+        <ProgressRing Grid.Row="1"
+                      IsActive="{Binding IsRecensioneDownload}"
+                      Visibility="{Binding IsRecensioneDownload, Converter={StaticResource BoolVisibility}}"
+                      Width="100"
+                      Height="100"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Canvas.ZIndex="999"/>
+        <Grid Grid.Row="1"
+              Background="White"
+              Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource BoolVisibility}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="{Binding RecensioneSelezionata.Titolo}"
+                       Style="{ThemeResource TitleTextBlockStyle}"
+                       HorizontalAlignment="Center"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"/>
+            
+            <ListView x:Name="recensione" Grid.Row="1" Padding="16" ItemsSource="{Binding ListaComponenti}" Loaded="OnLoaded" Unloaded="OnUnloaded">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ContentPresenter/>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Grid>
+    </Grid>
+</Page>

@@ -1,0 +1,7 @@
+﻿Salvataggio news nel database
+Ricerca in Recensioni/Soluzioni/Gallerie
+Pagina elenco trailer
+Pagina per visualizzare le saghe
+Requisiti di sistema in recensioni
+Tasti store, condiviti, preferiti in recensioni/soluzioni/gallerie
+Download podcast

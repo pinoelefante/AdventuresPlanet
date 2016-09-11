@@ -1,0 +1,39 @@
+﻿<Page
+    x:Class="AdventuresPlanet.Views.VideoPlayerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AdventuresPlanet.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Template10.Controls"
+    mc:Ignorable="d"
+    DataContext="{Binding BrowserPlayerPageVM, Source={StaticResource Locator}}">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader Frame="{x:Bind Frame}"/>
+        <ProgressRing Grid.Row="1"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Width="100"
+                      Height="100"
+                      Canvas.ZIndex="999"
+                      IsActive="{Binding IsLoading}"
+                      Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibility}}"/>
+        <WebView Grid.Row="1"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Stretch"
+                 DefaultBackgroundColor="Black"
+                 Source="{Binding WebSource}"
+                 MinWidth="300"
+                 MinHeight="300" />
+        <CommandBar Grid.Row="2" Visibility="{Binding ShowCommands, Converter={StaticResource BoolVisibility}}">
+            <AppBarButton Label="Precedente" Icon="Previous" IsEnabled="{Binding HasPrev}" HorizontalAlignment="Center"/>
+            <AppBarButton Label="Successivo" Icon="Next" IsEnabled="{Binding HasNext}" HorizontalAlignment="Center"/>
+        </CommandBar>
+    </Grid>
+</Page>

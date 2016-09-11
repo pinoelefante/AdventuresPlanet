@@ -1,0 +1,36 @@
+﻿<Page
+    x:Class="AdventuresPlanet.Views.ImageViewerPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AdventuresPlanet.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Template10.Controls"
+    mc:Ignorable="d"
+    DataContext="{Binding ImageViewerPageVM, Source={StaticResource Locator}}">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader Frame="{x:Bind Frame}">
+            <controls:PageHeader.PrimaryCommands>
+                <AppBarButton Icon="Download" Label="Scarica" Command="{Binding ScaricaImmagineCommand}" Foreground="White"/>
+            </controls:PageHeader.PrimaryCommands>
+        </controls:PageHeader>
+
+        <ScrollViewer Grid.Row="1"
+                      HorizontalScrollMode="Auto"
+                      VerticalScrollMode="Auto"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      ZoomMode="Enabled"
+                      MaxZoomFactor="3"
+                      MinZoomFactor="0.5">
+            <Image Source="{Binding UrlImage}"
+                   Stretch="None" 
+                   Margin="8,0"/>
+        </ScrollViewer>
+    </Grid>
+</Page>

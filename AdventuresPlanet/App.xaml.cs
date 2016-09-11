@@ -1,12 +1,13 @@
 using Windows.UI.Xaml;
 using System.Threading.Tasks;
-using AdventuresPlanet.Services.SettingsServices;
 using Windows.ApplicationModel.Activation;
 using Template10.Controls;
 using Template10.Common;
 using System;
 using System.Linq;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Core;
+using System.Diagnostics;
 
 namespace AdventuresPlanet
 {
@@ -19,16 +20,7 @@ namespace AdventuresPlanet
         public App()
         {
             InitializeComponent();
-            SplashFactory = (e) => new Views.Splash(e);
-
-            #region App settings
-
-            var _settings = SettingsService.Instance;
-            RequestedTheme = _settings.AppTheme;
-            CacheMaxDuration = _settings.CacheMaxDuration;
-            ShowShellBackButton = _settings.UseShellBackButton;
-
-            #endregion
+            //SplashFactory = (e) => new Views.Splash(e);
         }
 
         public override async Task OnInitializeAsync(IActivatedEventArgs args)
@@ -42,6 +34,7 @@ namespace AdventuresPlanet
                 Window.Current.Content = new ModalDialog
                 {
                     DisableBackButtonWhenModal = true,
+                    CanBackButtonDismiss = false,
                     Content = new Views.Shell(nav),
                     ModalContent = new Views.Busy(),
                 };
@@ -53,8 +46,8 @@ namespace AdventuresPlanet
         {
             // long-running startup tasks go here
             await Task.Delay(5000);
-
-            NavigationService.Navigate(typeof(Views.MainPage));
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            NavigationService.Navigate(typeof(Views.NewsPage));
             await Task.CompletedTask;
         }
     }
