@@ -250,6 +250,6 @@ namespace AdventuresPlanet.ViewModels
             (_aggiornaCmd = new DelegateCommand(() =>
             {
                 AggiornaPodcast();
-            }))
+            }));
     }
 }
