@@ -149,6 +149,7 @@
     <Content Include="Assets\icons\facebook_icon.png" />
     <Content Include="Assets\icons\icon_buy.png" />
     <Content Include="Assets\icons\icon-new.png" />
+    <Content Include="Assets\icons\youtube.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\SplashScreenGrimFandango.scale-200.png" />
     <Content Include="Assets\Square150.scale-200.png" />

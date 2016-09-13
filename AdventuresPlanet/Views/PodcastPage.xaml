@@ -52,6 +52,12 @@
         </Grid.RowDefinitions>
         <controls:PageHeader Frame="{x:Bind Frame}">
             <controls:PageHeader.PrimaryCommands>
+                <AppBarButton Foreground="White" Command="{Binding YoutubeCommand}">
+                    <AppBarButton.Icon>
+                        <BitmapIcon UriSource="ms-appx:///Assets/icons/youtube.png"/>
+                    </AppBarButton.Icon>
+                    <AppBarButton.Label>YouTube</AppBarButton.Label>
+                </AppBarButton>
                 <AppBarButton Label="Facebook" Foreground="White" Command="{Binding FacebookCommand}">
                     <AppBarButton.Icon>
                         <BitmapIcon UriSource="ms-appx:///Assets/icons/facebook_icon.png"/>

@@ -234,7 +234,7 @@ namespace AdventuresPlanet.ViewModels
                     {"Command", "Stop" }
                 });
             }));
-        private DelegateCommand _shareCmd, _aggiornaCmd, _fbCmd, _tgCmd, _mailCmd;
+        private DelegateCommand _shareCmd, _aggiornaCmd, _fbCmd, _tgCmd, _mailCmd, _ytCmd;
         public DelegateCommand CondividiCommand =>
             _shareCmd ??
             (_shareCmd = new DelegateCommand(() =>
@@ -269,6 +269,12 @@ namespace AdventuresPlanet.ViewModels
             (_mailCmd = new DelegateCommand(async () =>
             {
                 await Launcher.LaunchUriAsync(new Uri("mailto:calaveracafe@adventuresplanet.it"));
+            }));
+        public DelegateCommand YoutubeCommand =>
+            _ytCmd ??
+            (_ytCmd = new DelegateCommand(async () =>
+            {
+                await Launcher.LaunchUriAsync(new Uri("https://www.youtube.com/channel/UCNArti4IWxjCxkgEiLttqxA?sub_confirmation=1"));
             }));
     }
 }
