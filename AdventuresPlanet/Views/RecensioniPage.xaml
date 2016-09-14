@@ -95,6 +95,14 @@
                             </Border>
                         </DataTemplate>
                     </GridView.ItemTemplate>
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapGrid MaximumRowsOrColumns="4"
+                                      Orientation="Horizontal"
+                                      HorizontalAlignment="Center"
+                                      VerticalChildrenAlignment="Center"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
                 </GridView>
             </SemanticZoom.ZoomedOutView>
         </SemanticZoom>
