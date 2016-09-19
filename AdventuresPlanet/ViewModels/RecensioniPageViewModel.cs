@@ -156,8 +156,9 @@ namespace AdventuresPlanet.ViewModels
                     NavigationService.GoBack();
             }
         }
-        private bool _isCaricaRecensioni;
+        private bool _isCaricaRecensioni, _isCercaRecensione;
         public bool IsCaricaRecensioni { get { return _isCaricaRecensioni; } set { Set(ref _isCaricaRecensioni, value); } }
+        public bool IsCercaRecensione { get { return _isCercaRecensione; } set { Set(ref _isCercaRecensione, value); } }
         public Dictionary<string, ObservableCollection<RecensioneItem>> ListaRecensioni { get; }
         private DelegateCommand _aggiornaRece;
         public DelegateCommand AggiornaListaRecensioni =>
@@ -246,6 +247,7 @@ namespace AdventuresPlanet.ViewModels
                 Set(ref _receSelezionata, value);
                 if (value != null)
                 {
+                    IsCercaRecensione = false;
                     IsRecensioneSelezionata = true;
                     ComponiRecensione();
                     CaricaPosizione();
@@ -449,5 +451,36 @@ namespace AdventuresPlanet.ViewModels
             e.Request.Data.Properties.Title = $"Leggi la recensione di {RecensioneSelezionata.Titolo} su adventuresplanet.it";
             e.Request.Data.SetWebLink(new Uri($"{AVPManager.URL_BASE}{RecensioneSelezionata.Link}"));
         }
+        private DelegateCommand<string> _searchCommand;
+        private ObservableCollection<RecensioneItem> _searchColl;
+        public ObservableCollection<RecensioneItem> ListaSearch { get { return _searchColl; } set { Set(ref _searchColl, value); } }
+        public DelegateCommand<string> OnSearchText =>
+            _searchCommand ??
+            (_searchCommand = new DelegateCommand<string>((text) =>
+            {
+                text = text.Trim();
+                if (string.IsNullOrEmpty(text))
+                    ListaSearch?.Clear();
+                else
+                    ListaSearch = new ObservableCollection<RecensioneItem>(CercaRecensioni(text));
+            }));
+        private List<RecensioneItem> CercaRecensioni(string text)
+        {
+            List<RecensioneItem> founds = new List<RecensioneItem>();
+            foreach(var coll in ListaRecensioni.Values)
+            {
+                var f = coll.Where(x => x.Titolo.ToLower().Contains(text.ToLower()));
+                if (f != null && f.Any())
+                    founds.AddRange(f);
+            }
+            return founds;
+        }
+        private DelegateCommand _toggleSearch;
+        public DelegateCommand ToggleSearch =>
+            _toggleSearch ??
+            (_toggleSearch = new DelegateCommand(() =>
+            {
+                IsCercaRecensione = !IsCercaRecensione;
+            }));
     }
 }

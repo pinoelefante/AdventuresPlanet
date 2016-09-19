@@ -53,6 +53,13 @@
                 <AppBarButton Label="Condividi" Foreground="White" Command="{Binding CondividiCommand}" Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource BoolVisibility}}">
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
                 </AppBarButton>
+                <AppBarButton Icon="Find" Label="Cerca" Foreground="White" IsEnabled="{Binding IsCaricaRecensioni, Converter={StaticResource NotBool}}" Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource NotBoolVisibility}}">
+                    <interactivity:Interaction.Behaviors>
+                        <core:EventTriggerBehavior EventName="Tapped">
+                            <core:InvokeCommandAction Command="{Binding ToggleSearch}"/>
+                        </core:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </AppBarButton>
             </controls:PageHeader.PrimaryCommands>
             <controls:PageHeader.SecondaryCommands>
                 <AppBarButton Label="Aggiorna" Command="{Binding AggiornaListaRecensioni}" IsEnabled="{Binding IsCaricaRecensioni, Converter={StaticResource NotBool}}" Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource NotBoolVisibility}}"/>
@@ -66,6 +73,7 @@
                       Height="100"
                       Visibility="{Binding IsCaricaRecensioni, Converter={StaticResource BoolVisibility}}"
                       Canvas.ZIndex="999"/>
+        
         <!--#region Lista recensioni-->
         <SemanticZoom Grid.Row="1">
             <SemanticZoom.ZoomedInView>
@@ -106,6 +114,36 @@
                 </GridView>
             </SemanticZoom.ZoomedOutView>
         </SemanticZoom>
+        
+        <!--#region Cerca -->
+        <Grid Grid.Row="1"
+              Visibility="{Binding IsCercaRecensione, Converter={StaticResource BoolVisibility}}"
+              Canvas.ZIndex="100"
+              Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <TextBox x:Name="searchBox" PlaceholderText="es: Monkey Island" Grid.Row="0" AcceptsReturn="False" Margin="8" Padding="4">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="TextChanged">
+                        <core:InvokeCommandAction Command="{Binding OnSearchText}" CommandParameter="{Binding Text, ElementName=searchBox}"/>
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </TextBox>
+
+            <ListView ItemsSource="{Binding ListaSearch}"
+                      ItemTemplate="{StaticResource receList}"
+                      Grid.Row="1"
+                      Margin="8">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Grid>
         
         <!--#region Recensione -->
         <ProgressRing Grid.Row="1"
