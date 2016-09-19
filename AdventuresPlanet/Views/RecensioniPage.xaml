@@ -29,7 +29,7 @@
                 </Grid.ColumnDefinitions>
                 <BitmapIcon Grid.Column="0" UriSource="/Assets/icons/icon-new.png" Visibility="{Binding IsNew, Converter={StaticResource BoolVisibility}}"/>
                 <SymbolIcon Grid.Column="1" Symbol="Favorite" Visibility="{Binding IsPreferita, Converter={StaticResource BoolVisibility}}"/>
-                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,8,0">
                     <TextBlock Text="{Binding Titolo}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" HorizontalAlignment="Stretch"/>
                     <SymbolIcon Symbol="Video" Visibility="{Binding IsVideo, Converter={StaticResource BoolVisibility}}" Margin="4,0"/>
                 </StackPanel>

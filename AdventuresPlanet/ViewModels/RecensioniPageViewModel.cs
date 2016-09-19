@@ -147,6 +147,8 @@ namespace AdventuresPlanet.ViewModels
             e.Handled = true;
             if (IsRecensioneSelezionata)
                 ChiudiRecensione();
+            else if (IsCercaRecensione)
+                IsCercaRecensione = false;
             else if (NavigationService.CanGoBack)
                 NavigationService.GoBack();
             if (IsParameterOpen)
