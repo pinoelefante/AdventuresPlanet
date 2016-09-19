@@ -8,6 +8,7 @@ using System.Linq;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Core;
 using System.Diagnostics;
+using Windows.UI.Popups;
 
 namespace AdventuresPlanet
 {
@@ -20,7 +21,19 @@ namespace AdventuresPlanet
         public App()
         {
             InitializeComponent();
+            this.UnhandledException += App_UnhandledException;
             //SplashFactory = (e) => new Views.Splash(e);
+        }
+
+        private async void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+#if DEBUG
+            e.Handled = true;
+            await new MessageDialog(e.Message).ShowAsync();
+#else
+            await new MessageDialog("Si è verificato un errore inaspettato").ShowAsync();
+#endif
+
         }
 
         public override async Task OnInitializeAsync(IActivatedEventArgs args)

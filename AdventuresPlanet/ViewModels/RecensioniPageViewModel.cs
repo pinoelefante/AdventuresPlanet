@@ -39,14 +39,17 @@ namespace AdventuresPlanet.ViewModels
         private DataTransferManager _dataTransferManager;
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            Task aggiornaTask = null;
+            Task aggiornaTask = null, loadTask = null;
             NavigationService.FrameFacade.BackRequested += FrameFacade_BackRequested;
             _dataTransferManager = DataTransferManager.GetForCurrentView();
             _dataTransferManager.DataRequested += OnShareRequested;
             if (IsListaRecensioniEmpty())
-                CaricaRecensioniDaDatabase();
+                loadTask = CaricaRecensioniDaDatabase();
             if (IsToUpdateByTime())
+            {
+                if (loadTask != null) await loadTask;
                 aggiornaTask = AggiornaRecensioni();
+            }
 
             if (mode == NavigationMode.Back | mode == NavigationMode.Forward)
             {
@@ -61,8 +64,8 @@ namespace AdventuresPlanet.ViewModels
                     SelezionaRecensione.Execute(parameter);
                 else if (parameter is string && AVPManager.IsRecensione(parameter.ToString()))
                 {
-                    if (aggiornaTask != null)
-                        await aggiornaTask;
+                    if (loadTask != null) await loadTask;
+                    if (aggiornaTask != null) await aggiornaTask;
                     var found = FindRecensioneByLink(parameter.ToString().Replace(AVPManager.URL_BASE, ""));
                     IsParameterOpen = true;
                     if (found != null)
@@ -86,10 +89,21 @@ namespace AdventuresPlanet.ViewModels
                 return true;
             return false;
         }
-        private void CaricaRecensioniDaDatabase()
+        private Task CaricaRecensioniDaDatabase()
         {
-            var recensioni = db.SelectAllRecensioni();
-            InsertAction.Invoke(recensioni);
+            return Task.Run(() =>
+            {
+                WindowWrapper.Current().Dispatcher.Dispatch(() =>
+                {
+                    IsCaricaRecensioni = true;
+                });
+                var recensioni = db.SelectAllRecensioni();
+                InsertAction.Invoke(recensioni);
+                WindowWrapper.Current().Dispatcher.Dispatch(() =>
+                {
+                    IsCaricaRecensioni = false;
+                });
+            });
         }
         private RecensioneItem FindRecensioneById(string id)
         {
@@ -161,48 +175,49 @@ namespace AdventuresPlanet.ViewModels
                 return _insertAction ??
                     (_insertAction = (list) =>
                     {
-                        bool wasEmpty = IsListaRecensioniEmpty();
-                        foreach (var item in list)
+                        WindowWrapper.Current().Dispatcher.Dispatch(() =>
                         {
-                            string firstChar = item.Titolo.TrimStart().Substring(0, 1).ToUpper();
-                            switch (firstChar)
+                            bool wasEmpty = IsListaRecensioniEmpty();
+                            foreach (var item in list)
                             {
-                                case "0":
-                                case "1":
-                                case "2":
-                                case "3":
-                                case "4":
-                                case "5":
-                                case "6":
-                                case "7":
-                                case "8":
-                                case "9":
-                                    firstChar = "#";
-                                    break;
-                            }
-                            if (wasEmpty)
-                            {
-                                ListaRecensioni[firstChar].Add(item);
-                            }
-                            else
-                            {
-                                ObservableCollection<RecensioneItem> currList = ListaRecensioni[firstChar];
-                                int count = currList.Count;
-                                bool added = false;
-                                for (int i = 0; i < count && !added; i++)
+                                string firstChar = item.Titolo.TrimStart().Substring(0, 1).ToUpper();
+                                switch (firstChar)
                                 {
-                                    var currItem = currList[i];
-                                    if (item.Titolo.CompareTo(currItem.Titolo) <= 0)
-                                    {
-                                        currList.Insert(i, item);
-                                        added = true;
-                                    }
+                                    case "0":
+                                    case "1":
+                                    case "2":
+                                    case "3":
+                                    case "4":
+                                    case "5":
+                                    case "6":
+                                    case "7":
+                                    case "8":
+                                    case "9":
+                                        firstChar = "#";
+                                        break;
                                 }
-                                if (!added)
-                                    currList.Add(item);
+                                if (wasEmpty)
+                                    ListaRecensioni[firstChar].Add(item);
+                                else
+                                {
+                                    ObservableCollection<RecensioneItem> currList = ListaRecensioni[firstChar];
+                                    int count = currList.Count;
+                                    bool added = false;
+                                    for (int i = 0; i < count && !added; i++)
+                                    {
+                                        var currItem = currList[i];
+                                        if (item.Titolo.CompareTo(currItem.Titolo) <= 0)
+                                        {
+                                            currList.Insert(i, item);
+                                            added = true;
+                                        }
+                                    }
+                                    if (!added)
+                                        currList.Add(item);
+                                }
+                                RaisePropertyChanged(() => ListaRecensioni);
                             }
-                            RaisePropertyChanged(() => ListaRecensioni);
-                        }
+                        });
                     });
             }
         }

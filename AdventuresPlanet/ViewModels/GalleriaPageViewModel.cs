@@ -34,11 +34,14 @@ namespace AdventuresPlanet.ViewModels
         private DataTransferManager _dataTransferManager;
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            Task taskAggiorna = null;
+            Task taskAggiorna = null, loadGalleryTask = null;
             if (IsListaGallerieEmpty())
-                CaricaGallerieDaDatabase();
-            if(IsUpdateByTime())
+                loadGalleryTask = CaricaGallerieDaDatabase();
+            if (IsUpdateByTime())
+            {
+                if (loadGalleryTask != null) await loadGalleryTask;
                 taskAggiorna = AggiornaGallerie();
+            }
             if(mode == NavigationMode.Back | mode == NavigationMode.Forward)
             {
                 if(GalleriaSelezionata == null)
@@ -53,14 +56,12 @@ namespace AdventuresPlanet.ViewModels
                     GalleriaSelezionata = parameter as GalleriaItem;
                 else if(parameter is string && AVPManager.IsGalleriaImmagini(parameter.ToString()))
                 {
-                    if (taskAggiorna != null)
-                        await taskAggiorna;
+                    if (loadGalleryTask != null) await loadGalleryTask;
+                    if (taskAggiorna != null) await taskAggiorna;
                     var link_gall = UrlUtils.GetUrlParameterValue(parameter.ToString(), "game");
                     var found = FindGalleriaById(link_gall);
                     if(found != null)
-                    {
                         GalleriaSelezionata = found;
-                    }
                     else
                     {
                         IsGalleriaSelezionata = true;
@@ -85,10 +86,21 @@ namespace AdventuresPlanet.ViewModels
             return false;
         }
 
-        private void CaricaGallerieDaDatabase()
+        private Task CaricaGallerieDaDatabase()
         {
-            var gallerie = db.SelectAllGallerie();
-            InsertAction?.Invoke(gallerie);
+            return Task.Run(() =>
+            {
+                WindowWrapper.Current().Dispatcher.Dispatch(() =>
+                {
+                    IsCaricaGallerie = true;
+                });
+                var gallerie = db.SelectAllGallerie();
+                WindowWrapper.Current().Dispatcher.Dispatch(() =>
+                {
+                    InsertAction?.Invoke(gallerie);
+                    IsCaricaGallerie = false;
+                });
+            });
         }
 
         private bool IsParameterLoad;

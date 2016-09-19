@@ -37,12 +37,14 @@ namespace AdventuresPlanet.ViewModels
         }
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
-            Task aggiornaSolTask = null;
+            Task aggiornaSolTask = null, loadSolTask = null;
             if (IsListaSoluzioniEmpty())
-                CaricaSoluzioniDaDatabase();
+                loadSolTask = CaricaSoluzioniDaDatabase();
             if (IsToUpdateByTime())
+            {
+                if (loadSolTask != null) await loadSolTask;
                 aggiornaSolTask = AggiornaSoluzioni();
-
+            }
             if (mode == NavigationMode.Back | mode == NavigationMode.Forward)
             {
                 if (SoluzioneSelezionata != null)
@@ -59,13 +61,11 @@ namespace AdventuresPlanet.ViewModels
                 {
                     IsParameterOpen = true;
                     var linkSol = parameter.ToString().Replace(AVPManager.URL_BASE, "");
-                    if (aggiornaSolTask != null)
-                        await aggiornaSolTask;
+                    if (loadSolTask != null) await loadSolTask;
+                    if (aggiornaSolTask != null) await aggiornaSolTask;
                     var found = FindSoluzioneByLink(linkSol);
                     if (found != null)
-                    {
                         SoluzioneSelezionata = found;
-                    }
                     else
                     {
                         IsSoluzioneDownload = true;
@@ -91,10 +91,21 @@ namespace AdventuresPlanet.ViewModels
             return false;
         }
 
-        private void CaricaSoluzioniDaDatabase()
+        private Task CaricaSoluzioniDaDatabase()
         {
-            var soluzioni = db.SelectAllSoluzioni();
-            InsertAction.Invoke(soluzioni);
+            return Task.Run(() =>
+            {
+                WindowWrapper.Current().Dispatcher.Dispatch(() =>
+                {
+                    IsCaricaSoluzioni = true;
+                });
+                var soluzioni = db.SelectAllSoluzioni();
+                WindowWrapper.Current().Dispatcher.Dispatch(() =>
+                {
+                    InsertAction.Invoke(soluzioni);
+                    IsCaricaSoluzioni = true;
+                });
+            });
         }
 
         private bool IsParameterOpen;

@@ -45,20 +45,22 @@ namespace AdventuresPlanet.ViewModels
             BackgroundMediaPlayer.Current.CurrentStateChanged += Current_CurrentStateChanged;
             InitPlayer();
 
-            Task taskPodcast = null;
+            Task taskPodcast = null, loadPodTask = null;
             if (ListaPodcast.Count == 0)
-                CaricaPodcastDaDatabase();
-            if(IsToUpdateByTime())
+                loadPodTask = CaricaPodcastDaDatabase();
+            if (IsToUpdateByTime())
+            {
+                if (loadPodTask != null) await loadPodTask;
                 taskPodcast = AggiornaPodcast();
-
+            }
             if (parameter != null)
             {
                 if (parameter is PodcastItem)
                     PlayPodcast.Execute(parameter);
                 else if (parameter is string && Uri.IsWellFormedUriString(parameter.ToString(), UriKind.RelativeOrAbsolute))
                 {
-                    if (taskPodcast != null)
-                        await taskPodcast;
+                    if (loadPodTask != null) await loadPodTask;
+                    if (taskPodcast != null) await taskPodcast;
                     var fileName = UrlUtils.GetUrlParameterValue(parameter.ToString(), "podcast");
                     var res = ListaPodcast.Where(x => x.Filename.CompareTo(fileName) == 0);
                     if (res.Count() == 1)
@@ -88,10 +90,21 @@ namespace AdventuresPlanet.ViewModels
             return false;
         }
 
-        private void CaricaPodcastDaDatabase()
+        private Task CaricaPodcastDaDatabase()
         {
-            var podcast = db.SelectAllPodcast();
-            InsertAction.Invoke(podcast);
+            return Task.Run(() =>
+            {
+                WindowWrapper.Current().Dispatcher.Dispatch(() =>
+                {
+                    IsCaricaPodcast = true;
+                });
+                var podcast = db.SelectAllPodcast();
+                WindowWrapper.Current().Dispatcher.Dispatch(() =>
+                {
+                    InsertAction.Invoke(podcast);
+                    IsCaricaPodcast = false;
+                });
+            });
         }
 
         private void Current_CurrentStateChanged(MediaPlayer sender, object args)
