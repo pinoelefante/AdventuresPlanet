@@ -119,6 +119,8 @@ namespace AdventuresPlanet.ViewModels
             e.Handled = true;
             if (IsGalleriaSelezionata)
                 IsGalleriaSelezionata = false;
+            else if (IsCercaGalleria)
+                IsCercaGalleria = false;
             else if (NavigationService.CanGoBack)
                 NavigationService.GoBack();
             if (IsParameterLoad)
@@ -224,6 +226,7 @@ namespace AdventuresPlanet.ViewModels
             set
             {
                 Set(ref _selectedGall, value);
+                IsCercaGalleria = false;
                 IsGalleriaSelezionata = value != null;
                 Immagini.Galleria = value;
             }
@@ -263,6 +266,39 @@ namespace AdventuresPlanet.ViewModels
         {
             e.Request.Data.Properties.Title = $"Guarda le immagini di {GalleriaSelezionata.Titolo} su adventuresplanet.it";
             e.Request.Data.SetWebLink(new Uri($"{AVPManager.URL_BASE}scheda_immagini.php?game={GalleriaSelezionata.IdGalleria}"));
+        }
+        private bool _isCercaGalleria;
+        public bool IsCercaGalleria { get { return _isCercaGalleria; } set { Set(ref _isCercaGalleria, value); } }
+        private DelegateCommand _toggleSearch;
+        public DelegateCommand ToggleSearch =>
+            _toggleSearch ??
+            (_toggleSearch = new DelegateCommand(() =>
+            {
+                IsCercaGalleria = !IsCercaGalleria;
+            }));
+        private DelegateCommand<string> _searchCommand;
+        private ObservableCollection<GalleriaItem> _searchColl;
+        public ObservableCollection<GalleriaItem> ListaSearch { get { return _searchColl; } set { Set(ref _searchColl, value); } }
+        public DelegateCommand<string> OnSearchText =>
+            _searchCommand ??
+            (_searchCommand = new DelegateCommand<string>((text) =>
+            {
+                text = text.Trim();
+                if (string.IsNullOrEmpty(text))
+                    ListaSearch?.Clear();
+                else
+                    ListaSearch = new ObservableCollection<GalleriaItem>(CercaGallerie(text));
+            }));
+        private List<GalleriaItem> CercaGallerie(string text)
+        {
+            List<GalleriaItem> founds = new List<GalleriaItem>();
+            foreach (var coll in ListaGallerie.Values)
+            {
+                var f = coll.Where(x => x.Titolo.ToLower().Contains(text.ToLower()));
+                if (f != null && f.Any())
+                    founds.AddRange(f);
+            }
+            return founds;
         }
         public class ImagesCollection : ObservableCollection<AdvImage>, ISupportIncrementalLoading
         {

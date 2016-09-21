@@ -14,6 +14,16 @@
     <Page.Resources>
         <CollectionViewSource IsSourceGrouped="True" x:Key="GallerieList" ItemsPath="Value" Source="{Binding ListaGallerie}"/>
         <x:Int32 x:Key="MinImagesGrid">2</x:Int32>
+        <DataTemplate x:Key="gallItem">
+            <Grid>
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Tapped">
+                        <core:InvokeCommandAction Command="{Binding DataContext.SelezionaGalleriaCommand, ElementName=page}" CommandParameter="{Binding}"/>
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+                <TextBlock Text="{Binding Titolo}" />
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -26,12 +36,14 @@
                 <AppBarButton Label="Condividi" Foreground="White" Command="{Binding CondividiCommand}" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource BoolVisibility}}">
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
                 </AppBarButton>
+                <AppBarButton Label="Cerca" Icon="Find" Foreground="White" Command="{Binding ToggleSearch}" IsEnabled="{Binding IsCaricaGallerie, Converter={StaticResource NotBool}}" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource NotBoolVisibility}}" />
             </controls:PageHeader.PrimaryCommands>
             <controls:PageHeader.SecondaryCommands>
                 <AppBarButton Label="Aggiorna" Command="{Binding AggiornaCommand}" IsEnabled="{Binding IsCaricaGallerie, Converter={StaticResource NotBool}}" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource NotBoolVisibility}}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
 
+        <!--#region Lista gallerie-->
         <Grid Grid.Row="1" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource NotBoolVisibility}}">
             <ProgressRing IsActive="{Binding IsCaricaGallerie}"
                           Width="100"
@@ -42,19 +54,7 @@
                           Visibility="{Binding IsCaricaGallerie, Converter={StaticResource BoolVisibility}}"/>
             <SemanticZoom>
                 <SemanticZoom.ZoomedInView>
-                    <ListView ItemsSource="{Binding Source={StaticResource GallerieList}}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <interactivity:Interaction.Behaviors>
-                                        <core:EventTriggerBehavior EventName="Tapped">
-                                            <core:InvokeCommandAction Command="{Binding DataContext.SelezionaGalleriaCommand, ElementName=page}" CommandParameter="{Binding}"/>
-                                        </core:EventTriggerBehavior>
-                                    </interactivity:Interaction.Behaviors>
-                                    <TextBlock Text="{Binding Titolo}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
+                    <ListView ItemsSource="{Binding Source={StaticResource GallerieList}}" ItemTemplate="{StaticResource gallItem}">
                         <ListView.GroupStyle>
                             <GroupStyle HidesIfEmpty="True">
                                 <GroupStyle.HeaderTemplate>
@@ -92,7 +92,38 @@
                 </SemanticZoom.ZoomedOutView>
             </SemanticZoom>
         </Grid>
+        
+        <!--#region Cerca gallerie -->
+        <Grid Grid.Row="1"
+              Visibility="{Binding IsCercaGalleria, Converter={StaticResource BoolVisibility}}"
+              Canvas.ZIndex="100"
+              Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
 
+            <TextBox x:Name="searchBox" PlaceholderText="es: Monkey Island" Grid.Row="0" AcceptsReturn="False" Margin="8" Padding="4">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="TextChanged">
+                        <core:InvokeCommandAction Command="{Binding OnSearchText}" CommandParameter="{Binding Text, ElementName=searchBox}"/>
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </TextBox>
+
+            <ListView ItemsSource="{Binding ListaSearch}"
+                      ItemTemplate="{StaticResource gallItem}"
+                      Grid.Row="1"
+                      Margin="8">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Grid>
+        
+        <!--#region Galleria selezionata -->
         <Grid Grid.Row="1" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource BoolVisibility}}">
             <ProgressRing IsActive="{Binding Immagini.IsLoading}"
                           Width="100" Height="100"
