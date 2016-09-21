@@ -150,6 +150,8 @@ namespace AdventuresPlanet.ViewModels
             e.Handled = true;
             if (IsSoluzioneSelezionata)
                 ChiudiSoluzione();
+            else if (IsCercaSoluzione)
+                IsCercaSoluzione = false;
             else if (NavigationService.CanGoBack)
                 NavigationService.GoBack();
 
@@ -266,6 +268,7 @@ namespace AdventuresPlanet.ViewModels
                 Set(ref _solSelezionata, value);
                 if(value != null)
                 {
+                    IsCercaSoluzione = false;
                     IsSoluzioneSelezionata = true;
                     ComponiSoluzione();
                     CaricaPosizione();
@@ -454,6 +457,39 @@ namespace AdventuresPlanet.ViewModels
             e.Request.Data.Properties.Title = $"Leggi la soluzione di {SoluzioneSelezionata.Titolo} su adventuresplanet.it";
             e.Request.Data.SetWebLink(new Uri($"{AVPManager.URL_BASE}{SoluzioneSelezionata.Link}"));
         }
+        private DelegateCommand<string> _searchCommand;
+        private ObservableCollection<SoluzioneItem> _searchColl;
+        public ObservableCollection<SoluzioneItem> ListaSearch { get { return _searchColl; } set { Set(ref _searchColl, value); } }
+        public DelegateCommand<string> OnSearchText =>
+            _searchCommand ??
+            (_searchCommand = new DelegateCommand<string>((text) =>
+            {
+                text = text.Trim();
+                if (string.IsNullOrEmpty(text))
+                    ListaSearch?.Clear();
+                else
+                    ListaSearch = new ObservableCollection<SoluzioneItem>(CercaSoluzioni(text));
+            }));
+        private List<SoluzioneItem> CercaSoluzioni(string text)
+        {
+            List<SoluzioneItem> founds = new List<SoluzioneItem>();
+            foreach (var coll in ListaSoluzioni.Values)
+            {
+                var f = coll.Where(x => x.Titolo.ToLower().Contains(text.ToLower()));
+                if (f != null && f.Any())
+                    founds.AddRange(f);
+            }
+            return founds;
+        }
+        private DelegateCommand _toggleSearch;
+        public DelegateCommand ToggleSearch =>
+            _toggleSearch ??
+            (_toggleSearch = new DelegateCommand(() =>
+            {
+                IsCercaSoluzione = !IsCercaSoluzione;
+            }));
+        private bool _isCercaSol;
+        public bool IsCercaSoluzione { get { return _isCercaSol; } set { Set(ref _isCercaSol, value); } }
     }
     
 }
