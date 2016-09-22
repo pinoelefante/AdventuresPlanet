@@ -39,6 +39,7 @@
                 <AppBarButton Label="Cerca" Icon="Find" Foreground="White" Command="{Binding ToggleSearch}" IsEnabled="{Binding IsCaricaGallerie, Converter={StaticResource NotBool}}" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource NotBoolVisibility}}" />
             </controls:PageHeader.PrimaryCommands>
             <controls:PageHeader.SecondaryCommands>
+                <AppBarToggleButton Label="Preferita" Icon="Favorite" IsChecked="{Binding IsPreferita}" Command="{Binding TogglePreferitiCommand}" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource BoolVisibility}}"/>
                 <AppBarButton Label="Aggiorna" Command="{Binding AggiornaCommand}" IsEnabled="{Binding IsCaricaGallerie, Converter={StaticResource NotBool}}" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource NotBoolVisibility}}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>

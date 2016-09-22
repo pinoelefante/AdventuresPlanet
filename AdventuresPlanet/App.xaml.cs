@@ -52,6 +52,7 @@ namespace AdventuresPlanet
                     ModalContent = new Views.Busy(),
                 };
             }
+            this.ForceShowShellBackButton = true;
             await Task.CompletedTask;
         }
 

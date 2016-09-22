@@ -21,10 +21,12 @@ namespace AdventuresPlanet.ViewModels
     {
         private AVPManager manager;
         private AVPDatabase db;
-        public GalleriaPageViewModel(AVPManager m, AVPDatabase d)
+        private AVPPreferiti prefs;
+        public GalleriaPageViewModel(AVPManager m, AVPDatabase d, AVPPreferiti p)
         {
             manager = m;
             db = d;
+            prefs = p;
             ListaGallerie = new Dictionary<string, ObservableCollection<GalleriaItem>>();
             ListaGallerie.Add("#", new ObservableCollection<GalleriaItem>());
             for (char c = 'A'; c <= 'Z'; c++)
@@ -229,6 +231,7 @@ namespace AdventuresPlanet.ViewModels
                 IsCercaGalleria = false;
                 IsGalleriaSelezionata = value != null;
                 Immagini.Galleria = value;
+                RaisePropertyChanged(() => IsPreferita);
             }
         }
         private DelegateCommand<GalleriaItem> _selezionaGallCmd;
@@ -269,7 +272,7 @@ namespace AdventuresPlanet.ViewModels
         }
         private bool _isCercaGalleria;
         public bool IsCercaGalleria { get { return _isCercaGalleria; } set { Set(ref _isCercaGalleria, value); } }
-        private DelegateCommand _toggleSearch;
+        private DelegateCommand _toggleSearch, _togglePreferiti;
         public DelegateCommand ToggleSearch =>
             _toggleSearch ??
             (_toggleSearch = new DelegateCommand(() =>
@@ -299,6 +302,23 @@ namespace AdventuresPlanet.ViewModels
                     founds.AddRange(f);
             }
             return founds;
+        }
+        public DelegateCommand TogglePreferitiCommand =>
+            _togglePreferiti ??
+            (_togglePreferiti = new DelegateCommand(() =>
+            {
+                if (prefs.IsPreferita(GalleriaSelezionata.IdGalleria))
+                    prefs.RimuoviPreferiti(GalleriaSelezionata.IdGalleria);
+                else
+                    prefs.AggiungiPreferiti(GalleriaSelezionata.IdGalleria);
+                RaisePropertyChanged(() => IsPreferita);
+            }));
+        public bool IsPreferita
+        {
+            get
+            {
+                return prefs.IsPreferita(GalleriaSelezionata?.IdGalleria);
+            }
         }
         public class ImagesCollection : ObservableCollection<AdvImage>, ISupportIncrementalLoading
         {

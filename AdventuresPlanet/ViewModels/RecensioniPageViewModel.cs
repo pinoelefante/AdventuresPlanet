@@ -26,10 +26,12 @@ namespace AdventuresPlanet.ViewModels
     {
         private AVPManager manager;
         private AVPDatabase db;
-        public RecensioniPageViewModel(AVPManager m, AVPDatabase d)
+        private AVPPreferiti prefs;
+        public RecensioniPageViewModel(AVPManager m, AVPDatabase d, AVPPreferiti p)
         {
             db = d;
             manager = m;
+            prefs = p;
 
             ListaRecensioni = new Dictionary<string, ObservableCollection<RecensioneItem>>();
             ListaRecensioni.Add("#", new ObservableCollection<RecensioneItem>());
@@ -253,6 +255,7 @@ namespace AdventuresPlanet.ViewModels
                     IsRecensioneSelezionata = true;
                     ComponiRecensione();
                     CaricaPosizione();
+                    RaisePropertyChanged(() => IsPreferita);
                 }
                 else
                     IsRecensioneSelezionata = false;
@@ -477,12 +480,29 @@ namespace AdventuresPlanet.ViewModels
             }
             return founds;
         }
-        private DelegateCommand _toggleSearch;
+        private DelegateCommand _toggleSearch, _togglePreferiti;
         public DelegateCommand ToggleSearch =>
             _toggleSearch ??
             (_toggleSearch = new DelegateCommand(() =>
             {
                 IsCercaRecensione = !IsCercaRecensione;
             }));
+        public DelegateCommand TogglePreferitiCommand =>
+            _togglePreferiti ??
+            (_togglePreferiti = new DelegateCommand(() =>
+            {
+                if (prefs.IsPreferita(RecensioneSelezionata.Id))
+                    prefs.RimuoviPreferiti(RecensioneSelezionata.Id);
+                else
+                    prefs.AggiungiPreferiti(RecensioneSelezionata.Id);
+                RaisePropertyChanged(() => IsPreferita);
+            }));
+        public bool IsPreferita
+        {
+            get
+            {
+                return prefs.IsPreferita(RecensioneSelezionata?.Id);
+            }
+        }
     }
 }

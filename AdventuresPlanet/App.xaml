@@ -64,6 +64,18 @@
                 </conv:ValueWhenConverter.Otherwise>
             </conv:ValueWhenConverter>
 
+            <conv:ValueWhenConverter x:Key="NotIntToVisibilityConverter">
+                <conv:ValueWhenConverter.When>
+                    <x:Int32>0</x:Int32>
+                </conv:ValueWhenConverter.When>
+                <conv:ValueWhenConverter.Value>
+                    <Visibility>Visible</Visibility>
+                </conv:ValueWhenConverter.Value>
+                <conv:ValueWhenConverter.Otherwise>
+                    <Visibility>Collapsed</Visibility>
+                </conv:ValueWhenConverter.Otherwise>
+            </conv:ValueWhenConverter>
+
             <conv:ValueWhenConverter x:Key="IntToBooleanConverter">
                 <conv:ValueWhenConverter.When>
                     <x:Int32>0</x:Int32>
@@ -73,6 +85,15 @@
                 </conv:ValueWhenConverter.Value>
                 <conv:ValueWhenConverter.Otherwise>
                     <x:Boolean>true</x:Boolean>
+                </conv:ValueWhenConverter.Otherwise>
+            </conv:ValueWhenConverter>
+
+            <conv:ValueWhenConverter x:Key="NullVisibility2" When="{x:Null}">
+                <conv:ValueWhenConverter.Value>
+                    <Visibility>Collapsed</Visibility>
+                </conv:ValueWhenConverter.Value>
+                <conv:ValueWhenConverter.Otherwise>
+                    <Visibility>Visible</Visibility>
                 </conv:ValueWhenConverter.Otherwise>
             </conv:ValueWhenConverter>
 

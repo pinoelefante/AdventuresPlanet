@@ -78,8 +78,8 @@ namespace AdventuresPlanet.ViewModels
         private async void FrameFacade_BackRequested(object sender, HandledEventArgs e)
         {
             e.Handled = true;
-            if (IsNewsSelezionata)
-                IsNewsSelezionata = false;
+            if (NewsSelezionata!=null)
+                NewsSelezionata = null;
             else
             {
                 if (CloseDialog == null)
@@ -135,18 +135,7 @@ namespace AdventuresPlanet.ViewModels
             }));
         private bool _isNewsSelezionata, _isCaricaNews;
         private News _newsSelezionata;
-        public bool IsNewsSelezionata
-        {
-            get { return _isNewsSelezionata; }
-            set
-            {
-                Set(ref _isNewsSelezionata, value);
-                if (value)
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                else
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            }
-        }
+        public bool IsNewsSelezionata { get { return NewsSelezionata!=null; } }
         public bool IsCaricaNews { get { return _isCaricaNews; } set { Set(ref _isCaricaNews, value); } }
         public News NewsSelezionata
         {
@@ -154,13 +143,11 @@ namespace AdventuresPlanet.ViewModels
             set
             {
                 Set(ref _newsSelezionata, value);
+                RaisePropertyChanged(() => IsNewsSelezionata);
                 if (value != null)
                 {
-                    IsNewsSelezionata = true;
                     componiNews();
                 }
-                else
-                    IsNewsSelezionata = false;
             }
         }
         private async Task CaricaNews()

@@ -18,6 +18,7 @@ namespace AdventuresPlanet.ViewModels
             #region Service
             SimpleIoc.Default.Register<AVPManager>();
             SimpleIoc.Default.Register<AVPDatabase>();
+            SimpleIoc.Default.Register<AVPPreferiti>();
             #endregion
 
             #region ViewModels
@@ -28,6 +29,7 @@ namespace AdventuresPlanet.ViewModels
             SimpleIoc.Default.Register<GalleriaPageViewModel>();
             SimpleIoc.Default.Register<ImageViewerViewModel>();
             SimpleIoc.Default.Register<BrowserVideoPlayerViewModel>();
+            SimpleIoc.Default.Register<PreferitiViewModel>();
             #endregion
         }
         public NewsPageViewModel NewsPageVM
@@ -58,5 +60,10 @@ namespace AdventuresPlanet.ViewModels
         {
             get { return SimpleIoc.Default.GetInstance<BrowserVideoPlayerViewModel>(); }
         }
+        public PreferitiViewModel PreferitiVM
+        {
+            get { return SimpleIoc.Default.GetInstance<PreferitiViewModel>(); }
+        }
+
     }
 }

@@ -109,7 +109,9 @@
   <ItemGroup>
     <Compile Include="AVPDatabase.cs" />
     <Compile Include="AVPManager.cs" />
+    <Compile Include="AVPPreferiti.cs" />
     <Compile Include="Data\GalleriaItem.cs" />
+    <Compile Include="Data\GameWrapper.cs" />
     <Compile Include="Data\JsonData.cs" />
     <Compile Include="Data\News.cs" />
     <Compile Include="Data\NotificableItem.cs" />

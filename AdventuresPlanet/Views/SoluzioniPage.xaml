@@ -50,7 +50,7 @@
                 <AppBarButton Label="Condividi" Foreground="White" Command="{Binding CondividiCommand}" Visibility="{Binding IsSoluzioneSelezionata, Converter={StaticResource BoolVisibility}}">
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
                 </AppBarButton>
-                <AppBarButton Icon="Find" Label="Cerca" Foreground="White" IsEnabled="{Binding IsCaricaRecensioni, Converter={StaticResource NotBool}}" Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource NotBoolVisibility}}">
+                <AppBarButton Icon="Find" Label="Cerca" Foreground="White" IsEnabled="{Binding IsCaricaSoluzioni, Converter={StaticResource NotBool}}" Visibility="{Binding IsSoluzioneSelezionata, Converter={StaticResource NotBoolVisibility}}">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Tapped">
                             <core:InvokeCommandAction Command="{Binding ToggleSearch}"/>
@@ -60,6 +60,7 @@
             </controls:PageHeader.PrimaryCommands>
             
             <controls:PageHeader.SecondaryCommands>
+                <AppBarToggleButton Label="Preferita" Icon="Favorite" IsChecked="{Binding IsPreferita}" Command="{Binding TogglePreferitiCommand}" Visibility="{Binding IsSoluzioneSelezionata, Converter={StaticResource BoolVisibility}}"/>
                 <AppBarButton Label="Aggiorna" Command="{Binding AggiornaListaSoluzioni}" IsEnabled="{Binding IsCaricaSoluzioni, Converter={StaticResource NotBool}}" Visibility="{Binding IsSoluzioneSelezionata, Converter={StaticResource NotBoolVisibility}}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>

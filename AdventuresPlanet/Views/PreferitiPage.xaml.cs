@@ -20,12 +20,11 @@ namespace AdventuresPlanet.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class GalleriePage : Page
+    public sealed partial class PreferitiPage : Page
     {
-        public GalleriePage()
+        public PreferitiPage()
         {
             this.InitializeComponent();
-            this.NavigationCacheMode = NavigationCacheMode.Required;
         }
     }
 }

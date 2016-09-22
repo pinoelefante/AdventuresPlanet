@@ -87,5 +87,22 @@ namespace AdventuresPlanetRuntime
                 var i = db.Update(obj);
             }
         }
+        public GameWrapper GetGameById(string id)
+        {
+            using (var db = DBConnection)
+            {
+                GameWrapper game = new GameWrapper(id);
+                var recFound = db.Table<RecensioneItem>().Where(x => x.Id.Equals(id));
+                if (recFound!=null && recFound.Any())
+                    game.Recensione = recFound.ElementAt(0);
+                var solFound = db.Table<SoluzioneItem>().Where(x => x.Id.Equals(id));
+                if (solFound!=null && solFound.Any())
+                    game.Soluzione = solFound.ElementAt(0);
+                var gallFound = db.Table<GalleriaItem>().Where(x => x.IdGalleria.Equals(id));
+                if (gallFound!=null && gallFound.Any())
+                    game.Galleria = gallFound.ElementAt(0);
+                return game;
+            }
+        }
     }
 }

@@ -26,10 +26,12 @@ namespace AdventuresPlanet.ViewModels
     {
         private AVPManager manager;
         private AVPDatabase db;
-        public SoluzioniPageViewModel(AVPManager m, AVPDatabase d)
+        private AVPPreferiti prefs;
+        public SoluzioniPageViewModel(AVPManager m, AVPDatabase d, AVPPreferiti p)
         {
             manager = m;
             db = d;
+            prefs = p;
             ListaSoluzioni = new Dictionary<string, ObservableCollection<SoluzioneItem>>();
             ListaSoluzioni.Add("#", new ObservableCollection<SoluzioneItem>());
             for (char c = 'A'; c <= 'Z'; c++)
@@ -272,6 +274,7 @@ namespace AdventuresPlanet.ViewModels
                     IsSoluzioneSelezionata = true;
                     ComponiSoluzione();
                     CaricaPosizione();
+                    RaisePropertyChanged(() => IsPreferita);
                 }
                 else
                 {
@@ -481,7 +484,7 @@ namespace AdventuresPlanet.ViewModels
             }
             return founds;
         }
-        private DelegateCommand _toggleSearch;
+        private DelegateCommand _toggleSearch, _togglePreferiti;
         public DelegateCommand ToggleSearch =>
             _toggleSearch ??
             (_toggleSearch = new DelegateCommand(() =>
@@ -490,6 +493,23 @@ namespace AdventuresPlanet.ViewModels
             }));
         private bool _isCercaSol;
         public bool IsCercaSoluzione { get { return _isCercaSol; } set { Set(ref _isCercaSol, value); } }
+        public DelegateCommand TogglePreferitiCommand =>
+            _togglePreferiti ??
+            (_togglePreferiti = new DelegateCommand(() =>
+            {
+                if (prefs.IsPreferita(SoluzioneSelezionata.Id))
+                    prefs.RimuoviPreferiti(SoluzioneSelezionata.Id);
+                else
+                    prefs.AggiungiPreferiti(SoluzioneSelezionata.Id);
+                RaisePropertyChanged(() => IsPreferita);
+            }));
+        public bool IsPreferita
+        {
+            get
+            {
+                return prefs.IsPreferita(SoluzioneSelezionata?.Id);
+            }
+        }
     }
     
 }

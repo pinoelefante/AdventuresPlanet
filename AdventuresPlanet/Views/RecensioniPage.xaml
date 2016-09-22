@@ -8,6 +8,7 @@
     xmlns:controls="using:Template10.Controls"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:selectors="using:AdventuresPlanet.Views.Utils"
     mc:Ignorable="d"
     DataContext="{Binding RecensioniPageVM, Source={StaticResource Locator}}">
 
@@ -36,6 +37,24 @@
                 <TextBlock Grid.Column="3" Text="{Binding VotoText}"/>
             </Grid>
         </DataTemplate>
+        <DataTemplate x:Key="AddPreferiti">
+            <SymbolIcon Symbol="Favorite">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Tapped">
+                        <core:InvokeCommandAction Command="{Binding DataContext.AggiungiPreferitiCommand, ElementName=page}"/>
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </SymbolIcon>
+        </DataTemplate>
+        <DataTemplate x:Key="DelPreferiti">
+            <SymbolIcon Symbol="UnFavorite">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Tapped">
+                        <core:InvokeCommandAction Command="{Binding DataContext.RimuoviPreferitiCommand, ElementName=page}"/>
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </SymbolIcon>
+        </DataTemplate>
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -53,6 +72,7 @@
                 <AppBarButton Label="Condividi" Foreground="White" Command="{Binding CondividiCommand}" Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource BoolVisibility}}">
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
                 </AppBarButton>
+
                 <AppBarButton Icon="Find" Label="Cerca" Foreground="White" IsEnabled="{Binding IsCaricaRecensioni, Converter={StaticResource NotBool}}" Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource NotBoolVisibility}}">
                     <interactivity:Interaction.Behaviors>
                         <core:EventTriggerBehavior EventName="Tapped">
@@ -62,6 +82,7 @@
                 </AppBarButton>
             </controls:PageHeader.PrimaryCommands>
             <controls:PageHeader.SecondaryCommands>
+                <AppBarToggleButton Label="Preferita" Icon="Favorite" IsChecked="{Binding IsPreferita}" Command="{Binding TogglePreferitiCommand}" Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource BoolVisibility}}"/>
                 <AppBarButton Label="Aggiorna" Command="{Binding AggiornaListaRecensioni}" IsEnabled="{Binding IsCaricaRecensioni, Converter={StaticResource NotBool}}" Visibility="{Binding IsRecensioneSelezionata, Converter={StaticResource NotBoolVisibility}}"/>
             </controls:PageHeader.SecondaryCommands>
         </controls:PageHeader>
