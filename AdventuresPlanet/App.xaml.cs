@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Core;
 using System.Diagnostics;
 using Windows.UI.Popups;
+using Windows.ApplicationModel.Background;
 
 namespace AdventuresPlanet
 {
@@ -59,10 +60,48 @@ namespace AdventuresPlanet
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
             // long-running startup tasks go here
-            await Task.Delay(5000);
+            //await Task.Delay(5000);
+            TaskRegister("PodcastNotifier", "Tasks.PodcastNotifier");
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             NavigationService.Navigate(typeof(Views.NewsPage));
             await Task.CompletedTask;
+        }
+        private async void TaskRegister(string name, string entry)
+        {
+            var taskRegistered = false;
+
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if (task.Value.Name == name)
+                {
+                    taskRegistered = true;
+                    break;
+                }
+            }
+            if (!taskRegistered)
+            {
+                BackgroundTaskBuilder builder = new BackgroundTaskBuilder()
+                {
+                    Name = name,
+                    TaskEntryPoint = entry
+                };
+                switch (name)
+                {
+                    case "PodcastNotifier":
+                        var access = await BackgroundExecutionManager.RequestAccessAsync();
+                        builder.IsNetworkRequested = true;
+                        builder.CancelOnConditionLoss = true;
+                        builder.SetTrigger(new TimeTrigger(90, false));
+                        builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
+                        builder.AddCondition(new SystemCondition(SystemConditionType.BackgroundWorkCostNotHigh));
+                        var reg = builder.Register();
+                        reg.Completed += (s, e) =>
+                        {
+                            Debug.WriteLine("Podcast Notifier background task complete");
+                        };
+                        break;
+                }
+            }
         }
     }
 }

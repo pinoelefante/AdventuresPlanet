@@ -251,6 +251,10 @@
       <Project>{8821b3eb-78b9-4b47-9d5d-c5a8ab4943ee}</Project>
       <Name>PodcastPlayer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Tasks\Tasks.csproj">
+      <Project>{d09b3a81-d1a1-4243-a21a-1ef35b660c26}</Project>
+      <Name>Tasks</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{916391FC-11B9-4017-A35C-974BB30D2EFC}</Project>
       <Name>Utils</Name>
