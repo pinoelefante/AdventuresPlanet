@@ -34,5 +34,19 @@ namespace AdventuresPlanetRuntime.Data
         public RecensioneItem Recensione { get { return rece; } set { Set(ref rece, value); } }
         public SoluzioneItem Soluzione { get { return solu; } set { Set(ref solu, value); } }
         public GalleriaItem Galleria { get { return gall; } set { Set(ref gall, value); } }
+        public int IntValue
+        {
+            get
+            {
+                int count = 0;
+                if (Recensione != null)
+                    count++;
+                if (Soluzione != null)
+                    count++;
+                if (Galleria != null)
+                    count++;
+                return count;
+            }
+        }
     }
 }

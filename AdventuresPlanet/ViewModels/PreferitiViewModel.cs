@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 
 namespace AdventuresPlanet.ViewModels
@@ -39,9 +40,7 @@ namespace AdventuresPlanet.ViewModels
         private void FrameFacade_BackRequested(object sender, Template10.Common.HandledEventArgs e)
         {
             e.Handled = true;
-            if (ItemSelected != null)
-                ItemSelected = null;
-            else if (NavigationService.CanGoBack)
+            if (NavigationService.CanGoBack)
                 NavigationService.GoBack();
         }
         public ObservableCollection<GameWrapper> ListaPreferiti { get; set; }
@@ -63,34 +62,31 @@ namespace AdventuresPlanet.ViewModels
             _itemSelCmd ??
             (_itemSelCmd = new DelegateCommand<GameWrapper>((item) =>
             {
-                ItemSelected = item;
+                if(item.IntValue == 1)
+                {
+                    if(item.Recensione!=null) NavigationService.Navigate(typeof(RecensioniPage), item.Recensione);
+                    else if(item.Soluzione!=null) NavigationService.Navigate(typeof(SoluzioniPage), item.Soluzione);
+                    else if(item.Galleria!=null) NavigationService.Navigate(typeof(GalleriePage), item.Galleria);
+                }
             }));
-        private GameWrapper _selectedItem;
-        public GameWrapper ItemSelected { get { return _selectedItem; } set { Set(ref _selectedItem, value); } }
-        private DelegateCommand _chiudiSceltaCommand, _openReceCmd, _openSolCmd, _openGallCmd;
-        public DelegateCommand ChiudiSceltaCommand =>
-            _chiudiSceltaCommand ??
-            (_chiudiSceltaCommand = new DelegateCommand(() =>
-            {
-                ItemSelected = null;
-            }));
-        public DelegateCommand ApriRecensioneCommand =>
+        private DelegateCommand<GameWrapper> _openReceCmd, _openSolCmd, _openGallCmd;
+        public DelegateCommand<GameWrapper> ApriRecensioneCommand =>
             _openReceCmd ??
-            (_openReceCmd = new DelegateCommand(() =>
+            (_openReceCmd = new DelegateCommand<GameWrapper>((item) =>
             {
-                NavigationService.Navigate(typeof(RecensioniPage), ItemSelected.Recensione);
+                NavigationService.Navigate(typeof(RecensioniPage), item.Recensione);
             }));
-        public DelegateCommand ApriSoluzioneCommand =>
-            _openReceCmd ??
-            (_openReceCmd = new DelegateCommand(() =>
+        public DelegateCommand<GameWrapper> ApriSoluzioneCommand =>
+            _openSolCmd ??
+            (_openSolCmd = new DelegateCommand<GameWrapper>((item) =>
             {
-                NavigationService.Navigate(typeof(SoluzioniPage), ItemSelected.Soluzione);
+                NavigationService.Navigate(typeof(SoluzioniPage), item.Soluzione);
             }));
-        public DelegateCommand ApriGalleriaCommand =>
-            _openReceCmd ??
-            (_openReceCmd = new DelegateCommand(() =>
+        public DelegateCommand<GameWrapper> ApriGalleriaCommand =>
+            _openGallCmd ??
+            (_openGallCmd = new DelegateCommand<GameWrapper>((item) =>
             {
-                NavigationService.Navigate(typeof(GalleriePage), ItemSelected.Galleria);
+                NavigationService.Navigate(typeof(GalleriePage), item.Galleria);
             }));
     }
 }

@@ -39,6 +39,7 @@ namespace AdventuresPlanet.ViewModels
         }
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            IsParameterOpen = false; //reset parametro
             Task aggiornaSolTask = null, loadSolTask = null;
             if (IsListaSoluzioniEmpty())
                 loadSolTask = CaricaSoluzioniDaDatabase();

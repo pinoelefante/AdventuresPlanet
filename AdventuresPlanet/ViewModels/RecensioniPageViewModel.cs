@@ -41,6 +41,7 @@ namespace AdventuresPlanet.ViewModels
         private DataTransferManager _dataTransferManager;
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            IsParameterOpen = false; //reset parametro
             Task aggiornaTask = null, loadTask = null;
             NavigationService.FrameFacade.BackRequested += FrameFacade_BackRequested;
             _dataTransferManager = DataTransferManager.GetForCurrentView();

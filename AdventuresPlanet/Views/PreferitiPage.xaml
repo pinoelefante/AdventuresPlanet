@@ -8,18 +8,33 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:behaviors="using:Template10.Behaviors"
     xmlns:controls="using:Template10.Controls"
     mc:Ignorable="d"
     DataContext="{Binding PreferitiVM, Source={StaticResource Locator}}">
     <Page.Resources>
+        <x:Int32 x:Key="menuCount">1</x:Int32>
         <DataTemplate x:Key="prefTemplate">
             <Grid>
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Tapped">
-                        <core:InvokeCommandAction Command="{Binding DataContext.ItemSelectedCommand, ElementName=page}" CommandParameter="{Binding}" />
+                        <behaviors:ConditionalAction LeftValue="{Binding IntValue}" Operator="NotEqualToRight" RightValue="1">
+                            <behaviors:OpenFlyoutAction/>
+                        </behaviors:ConditionalAction>
+
+                        <behaviors:ConditionalAction LeftValue="{Binding IntValue}" Operator="EqualToRight" RightValue="1">
+                            <core:InvokeCommandAction Command="{Binding DataContext.ItemSelectedCommand, ElementName=page}" CommandParameter="{Binding}"/>
+                        </behaviors:ConditionalAction>
                     </core:EventTriggerBehavior>
                 </interactivity:Interaction.Behaviors>
                 <TextBlock Text="{Binding Titolo}" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
+                <FlyoutBase.AttachedFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Recensione" Visibility="{Binding Recensione, Converter={StaticResource NullVisibility2}}" Command="{Binding DataContext.ApriRecensioneCommand, ElementName=page}" CommandParameter="{Binding}"/>
+                        <MenuFlyoutItem Text="Soluzione" Visibility="{Binding Soluzione, Converter={StaticResource NullVisibility2}}" Command="{Binding DataContext.ApriSoluzioneCommand, ElementName=page}" CommandParameter="{Binding}"/>
+                        <MenuFlyoutItem Text="Galleria" Visibility="{Binding Galleria, Converter={StaticResource NullVisibility2}}" Command="{Binding DataContext.ApriGalleriaCommand, ElementName=page}" CommandParameter="{Binding}"/>
+                    </MenuFlyout>
+                </FlyoutBase.AttachedFlyout>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -39,14 +54,5 @@
             </ListView.ItemContainerStyle>
         </ListView>
         <TextBlock Text="Non c'è niente da guardare" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Visibility="{Binding ListaPreferiti.Count, Converter={StaticResource NotIntToVisibilityConverter}}"/>
-        <Grid Grid.Row="1" Background="White" Canvas.ZIndex="10" Visibility="{Binding ItemSelected, Converter={StaticResource NullVisibility2}}">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Padding="16,8" BorderThickness="2" BorderBrush="Gray" Orientation="Vertical" Width="250" Height="280">
-                <Button Content="X" Foreground="Red" Command="{Binding ChiudiSceltaCommand}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="Transparent" HorizontalAlignment="Right" />
-                <TextBlock Text="{Binding ItemSelected.Titolo}" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis"/>
-                <Button Content="Recensione" Command="{Binding ApriRecensioneCommand}" HorizontalAlignment="Center" Visibility="{Binding ItemSelected.Recensione, Converter={StaticResource NullVisibility2}}" Width="100" Height="50" Margin="4,8"/>
-                <Button Content="Soluzione"  Command="{Binding ApriSoluzioneCommand}"  HorizontalAlignment="Center" Visibility="{Binding ItemSelected.Soluzione,  Converter={StaticResource NullVisibility2}}" Width="100" Height="50" Margin="4,8"/>
-                <Button Content="Immagini"   Command="{Binding ApriGalleriaCommand}"   HorizontalAlignment="Center" Visibility="{Binding ItemSelected.Galleria,   Converter={StaticResource NullVisibility2}}" Width="100" Height="50" Margin="4,8"/>
-            </StackPanel>
-        </Grid>
     </Grid>
 </Page>

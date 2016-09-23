@@ -36,6 +36,7 @@ namespace AdventuresPlanet.ViewModels
         private DataTransferManager _dataTransferManager;
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
+            IsParameterLoad = false; //reset parametro
             Task taskAggiorna = null, loadGalleryTask = null;
             if (IsListaGallerieEmpty())
                 loadGalleryTask = CaricaGallerieDaDatabase();
