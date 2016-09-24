@@ -32,14 +32,14 @@
         </uap:InitialRotationPreference>
       </uap:VisualElements>
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="PodcastPlayer.Player">
-          <BackgroundTasks>
-            <Task Type="audio" />
-          </BackgroundTasks>
-        </Extension>
         <Extension Category="windows.backgroundTasks" EntryPoint="Tasks.PodcastNotifier">
           <BackgroundTasks>
             <Task Type="timer" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="PodcastPlayer.Player">
+          <BackgroundTasks>
+            <Task Type="audio" />
           </BackgroundTasks>
         </Extension>
       </Extensions>
@@ -48,5 +48,6 @@
   <Capabilities>
     <Capability Name="internetClient" />
     <uap:Capability Name="picturesLibrary" />
+    <uap:Capability Name="musicLibrary" />
   </Capabilities>
 </Package>

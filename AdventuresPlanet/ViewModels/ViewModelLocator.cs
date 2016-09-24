@@ -1,4 +1,5 @@
-﻿using AdventuresPlanetRuntime;
+﻿using AdventuresPlanet.Services;
+using AdventuresPlanetRuntime;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using System;
@@ -19,6 +20,7 @@ namespace AdventuresPlanet.ViewModels
             SimpleIoc.Default.Register<AVPManager>();
             SimpleIoc.Default.Register<AVPDatabase>();
             SimpleIoc.Default.Register<AVPPreferiti>();
+            SimpleIoc.Default.Register<DownloadService>();
             #endregion
 
             #region ViewModels
@@ -30,6 +32,7 @@ namespace AdventuresPlanet.ViewModels
             SimpleIoc.Default.Register<ImageViewerViewModel>();
             SimpleIoc.Default.Register<BrowserVideoPlayerViewModel>();
             SimpleIoc.Default.Register<PreferitiViewModel>();
+            SimpleIoc.Default.Register<DownloadPageViewModel>();
             #endregion
         }
         public NewsPageViewModel NewsPageVM
@@ -64,6 +67,9 @@ namespace AdventuresPlanet.ViewModels
         {
             get { return SimpleIoc.Default.GetInstance<PreferitiViewModel>(); }
         }
-
+        public DownloadPageViewModel DownloadVM
+        {
+            get { return SimpleIoc.Default.GetInstance<DownloadPageViewModel>(); }
+        }
     }
 }

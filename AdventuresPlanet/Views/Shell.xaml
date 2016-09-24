@@ -55,6 +55,15 @@
                 </StackPanel>
             </Controls:HamburgerButtonInfo>
         </Controls:HamburgerMenu.PrimaryButtons>
+
+        <Controls:HamburgerMenu.SecondaryButtons>
+            <Controls:HamburgerButtonInfo PageType="views:DownloadPage" x:Name="ButtonDownload">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Width="48" Height="48" Symbol="Download"/>
+                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Download"/>
+                </StackPanel>
+            </Controls:HamburgerButtonInfo>
+        </Controls:HamburgerMenu.SecondaryButtons>
     </Controls:HamburgerMenu>
 
 </Page>

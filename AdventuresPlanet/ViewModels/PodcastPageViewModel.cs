@@ -1,4 +1,5 @@
-﻿using AdventuresPlanetRuntime;
+﻿using AdventuresPlanet.Services;
+using AdventuresPlanetRuntime;
 using AdventuresPlanetRuntime.Data;
 using System;
 using System.Collections.Generic;
@@ -23,10 +24,12 @@ namespace AdventuresPlanet.ViewModels
     {
         private AVPManager manager;
         private AVPDatabase db;
-        public PodcastPageViewModel(AVPManager m, AVPDatabase d)
+        private DownloadService downloader;
+        public PodcastPageViewModel(AVPManager m, AVPDatabase d, DownloadService down)
         {
             manager = m;
             db = d;
+            downloader = down;
             ListaPodcast = new ObservableCollection<PodcastItem>();
         }
         public ObservableCollection<PodcastItem> ListaPodcast { get; private set; }
@@ -180,7 +183,7 @@ namespace AdventuresPlanet.ViewModels
             });
         }
         private MessageDialog resumeDialog;
-        private DelegateCommand<PodcastItem> _playPodcast;
+        private DelegateCommand<PodcastItem> _playPodcast, _downPodcast;
         public DelegateCommand<PodcastItem> PlayPodcast =>
             _playPodcast ??
             (_playPodcast = new DelegateCommand<PodcastItem>(async (x) =>
@@ -202,16 +205,46 @@ namespace AdventuresPlanet.ViewModels
                     await resumeDialog.ShowAsync();
                 }
                 PodcastSelezionato = x;
-                BackgroundMediaPlayer.SendMessageToBackground(new ValueSet()
+                var path = await PodcastLocalPath(x);
+                if (string.IsNullOrEmpty(path))
                 {
-                    {"Command", "PlayOnline" },
-                    {"Url", x.Link },
-                    {"Thumb", x.Immagine },
-                    {"Title", x.TitoloBG },
-                    {"Artist", "Calavera Cafe" },
-                    {"Position", position }
-                });
+                    BackgroundMediaPlayer.SendMessageToBackground(new ValueSet()
+                    {
+                        {"Command", "PlayOnline" },
+                        {"Url", x.Link },
+                        {"Thumb", x.Immagine },
+                        {"Title", x.TitoloBG },
+                        {"Artist", "Calavera Cafe" },
+                        {"Position", position }
+                    });
+                }
+                else
+                {
+                    BackgroundMediaPlayer.SendMessageToBackground(new ValueSet()
+                    {
+                        {"Command", "PlayOffline" },
+                        {"Path", path },
+                        {"Thumb", x.Immagine },
+                        {"Title", x.TitoloBG },
+                        {"Artist", "Calavera Cafe" },
+                        {"Position", position }
+                    });
+                }
             }));
+        private async Task<string> PodcastLocalPath(PodcastItem pod)
+        {
+            StorageFolder music = KnownFolders.MusicLibrary;
+            StorageFolder podcastDir = await music.CreateFolderAsync("CalaveraCafe", CreationCollisionOption.OpenIfExists);
+            try
+            {
+                var file = await podcastDir.GetFileAsync(pod.Filename);
+                return file.Path;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
         private void InitPlayer()
         {
             BackgroundMediaPlayer.SendMessageToBackground(new ValueSet()
@@ -259,6 +292,12 @@ namespace AdventuresPlanet.ViewModels
             e.Request.Data.Properties.Title = $"Ascolta l'episodio {PodcastSelezionato.TitoloBG} del podcast Calavera Cafè";
             e.Request.Data.SetWebLink(new Uri($"{PodcastSelezionato.Link}"));
         }
+        public DelegateCommand<PodcastItem> DownloadPodcastCommand =>
+            _downPodcast ??
+            (_downPodcast = new DelegateCommand<PodcastItem>((podcast) =>
+            {
+                downloader.DownloadPodcast(podcast);
+            }));
         public DelegateCommand AggiornaCommand =>
             _aggiornaCmd ??
             (_aggiornaCmd = new DelegateCommand(() =>
