@@ -67,14 +67,11 @@ namespace AdventuresPlanet.ViewModels
                 {
                     imgBytes.CopyTo(sw);
                 }
-                Debug.WriteLine("Download completato");
-                //Shell.Instance.ShowMessagePopup($"Download {filename} completato!");
             }
             catch (Exception e)
             {
                 error = true;
-                Debug.WriteLine("Download errore");
-                //Shell.Instance.ShowMessagePopup($"Download {filename} fallito!", true);
+                Debug.WriteLine($"Download errore - {e.Message}");
             }
             finally
             {
@@ -93,7 +90,7 @@ namespace AdventuresPlanet.ViewModels
                         },
                         BodyTextLine1 = new ToastText()
                         {
-                            Text = filename
+                            Text = $"{(titoloAvv != null ? $"{titoloAvv} - " : string.Empty)}{filename}"
                         }
                     }
                 };

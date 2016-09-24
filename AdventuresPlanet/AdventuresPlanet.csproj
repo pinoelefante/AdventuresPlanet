@@ -111,6 +111,7 @@
     <Compile Include="ViewModels\PodcastPageViewModel.cs" />
     <Compile Include="ViewModels\PreferitiViewModel.cs" />
     <Compile Include="ViewModels\RecensioniPageViewModel.cs" />
+    <Compile Include="ViewModels\SagaViewModel.cs" />
     <Compile Include="ViewModels\SoluzioniPageViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Views\Busy.xaml.cs">
@@ -136,6 +137,9 @@
     </Compile>
     <Compile Include="Views\RecensioniPage.xaml.cs">
       <DependentUpon>RecensioniPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SagaPage.xaml.cs">
+      <DependentUpon>SagaPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Shell.xaml.cs">
       <DependentUpon>Shell.xaml</DependentUpon>
@@ -223,6 +227,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RecensioniPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SagaPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

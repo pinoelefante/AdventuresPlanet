@@ -222,6 +222,8 @@ namespace AdventuresPlanet.ViewModels
                                 NavigationService.Navigate(typeof(GalleriePage), link);
                             else if (AVPManager.IsTrailer(link) || AVPManager.IsExtra(link))
                                 NavigationService.Navigate(typeof(VideoPlayerPage), link);
+                            else if (AVPManager.IsSaga(link))
+                                NavigationService.Navigate(typeof(SagaPage), link);
                             else
                                 await Launcher.LaunchUriAsync(new Uri(link));
                         };
@@ -229,7 +231,7 @@ namespace AdventuresPlanet.ViewModels
                         link_text.Text = text;
                         link_text.FontWeight = FontWeights.Bold;
 
-                        if (AVPManager.IsSoluzione(link) || AVPManager.IsRecensione(link) || AVPManager.IsPodcast(link) || AVPManager.IsGalleriaImmagini(link) || AVPManager.IsExtra(link) || AVPManager.IsTrailer(link))
+                        if (AVPManager.IsSoluzione(link) || AVPManager.IsRecensione(link) || AVPManager.IsPodcast(link) || AVPManager.IsGalleriaImmagini(link) || AVPManager.IsExtra(link) || AVPManager.IsTrailer(link) || AVPManager.IsSaga(link))
                         {
                             link_text.Foreground = new SolidColorBrush(Colors.Orange);
                         }

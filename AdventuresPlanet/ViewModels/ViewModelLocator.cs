@@ -33,6 +33,7 @@ namespace AdventuresPlanet.ViewModels
             SimpleIoc.Default.Register<BrowserVideoPlayerViewModel>();
             SimpleIoc.Default.Register<PreferitiViewModel>();
             SimpleIoc.Default.Register<DownloadPageViewModel>();
+            SimpleIoc.Default.Register<SagaViewModel>();
             #endregion
         }
         public NewsPageViewModel NewsPageVM
@@ -70,6 +71,10 @@ namespace AdventuresPlanet.ViewModels
         public DownloadPageViewModel DownloadVM
         {
             get { return SimpleIoc.Default.GetInstance<DownloadPageViewModel>(); }
+        }
+        public SagaViewModel SagaVM
+        {
+            get { return SimpleIoc.Default.GetInstance<SagaViewModel>(); }
         }
     }
 }

@@ -5,7 +5,7 @@
     xmlns:local="using:AdventuresPlanet.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:down="using:AdventuresPlanet.Services"
+    xmlns:controls="using:Template10.Controls"
     mc:Ignorable="d"
     DataContext="{Binding DownloadVM, Source={StaticResource Locator}}">
     <Page.Resources>
@@ -20,25 +20,31 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="{Binding FriendlyName}"/>
-                <ProgressBar Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" Value="{Binding Progress}" Maximum="100"/>
-                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
-                    <TextBlock Text="{Binding Progress}" Margin="8,0" HorizontalAlignment="Center"/>
-                    <Button Command="{Binding DataContext.RimuoviDownload, ElementName=page}" CommandParameter="{Binding}">
-                        <SymbolIcon Symbol="Stop"/>
+                <TextBlock Grid.Row="0" Text="{Binding FriendlyName}"/>
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                    <Button Background="Transparent" Command="{Binding DataContext.RimuoviDownload, ElementName=page}" CommandParameter="{Binding}">
+                        <SymbolIcon Symbol="Cancel"/>
                     </Button>
                 </StackPanel>
+                <ProgressBar Grid.Row="1" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Center" Value="{Binding Progress}" Maximum="100"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Progress}" Margin="8,0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                 <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding ProgressText}"/>
             </Grid>
         </DataTemplate>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListView ItemsSource="{Binding Download.ListaDownload}" ItemTemplate="{StaticResource downloadItem}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <controls:PageHeader Frame="{x:Bind Frame}"/>
+        <ListView Grid.Row="1" ItemsSource="{Binding Download.ListaDownload}" ItemTemplate="{StaticResource downloadItem}">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
+        <TextBlock Grid.Row="1" Text="Non ci sono download in corso" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding Download.ListaDownload.Count, Converter={StaticResource NotIntToVisibilityConverter}}"/>
     </Grid>
 </Page>

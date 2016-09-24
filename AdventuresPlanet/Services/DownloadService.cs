@@ -131,7 +131,7 @@ namespace AdventuresPlanet.Services
         }
         private async Task HandleDownloadAsync(DownloadItem download, bool isAttached = false)
         {
-            if (download.DownloadOp.Progress.TotalBytesToReceive == download.DownloadOp.Progress.BytesReceived)
+            if (download.DownloadOp.Progress.TotalBytesToReceive!=0 && download.DownloadOp.Progress.TotalBytesToReceive == download.DownloadOp.Progress.BytesReceived)
             {
                 //await download.DownloadOp.AttachAsync();
                 RimuoviDownload(download);
@@ -240,10 +240,17 @@ namespace AdventuresPlanet.Services
                 ListaDownload.Insert(0, down);
             });
         }
-        private void RimuoviDownload(DownloadItem down)
+        private async void RimuoviDownload(DownloadItem down)
         {
             data.Values.Remove($"download_{down.Link}");
             ListaDownload.Remove(down);
+
+            try
+            {
+                var file = await StorageFile.GetFileFromPathAsync(down.DownloadPath);
+                file.DeleteAsync();
+            }
+            catch { }
         }
         private void LoadDownload()
         {

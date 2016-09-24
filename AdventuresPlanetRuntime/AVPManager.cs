@@ -350,6 +350,39 @@ namespace AdventuresPlanetRuntime
                 return null;
             }
         }
+        public async Task<List<PaginaContenuti>> LoadSaga(string url)
+        {
+            var content = await GetStringAsync(url);
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(content);
+            var listFound = doc.GetElementbyId("rece_list").Descendants("div");//.Where(x => x.Attributes.Contains("rece_nome"));
+            List<PaginaContenuti> contenuti = new List<PaginaContenuti>(listFound.Count());
+            for (int i = 1;i<listFound.Count();i++)
+            {
+
+                var itemDiv = listFound.ElementAt(i);
+                var item = itemDiv.FirstChild;
+                var link = WebUtility.HtmlDecode(item.Attributes["href"].Value);
+                var nome = WebUtility.HtmlDecode(item.InnerText);
+                if (IsRecensione($"{URL_BASE}{link}"))
+                {
+                    contenuti.Add(new RecensioneItem()
+                    {
+                        Titolo = nome,
+                        Link = link
+                    });
+                }
+                else if (IsSoluzione($"{URL_BASE}{link}"))
+                {
+                    contenuti.Add(new SoluzioneItem()
+                    {
+                        Titolo = nome,
+                        Link = link
+                    });
+                }
+            }
+            return contenuti;
+        }
         public async Task<long> LoadListGallerie(Action<List<GalleriaItem>> AddAction, Action<IEnumerable<GalleriaItem>> SaveAction, long time = 0)
         {
             var response = await jsonClient.GetStringAsync(new Uri($"http://pinoelefante.altervista.org/avp_it/avp_gallerie.php?from={time}"));
@@ -521,39 +554,66 @@ namespace AdventuresPlanetRuntime
                 return null;
             }
         }
-        public static bool IsRecensione(String uri)
+        public static bool IsRecensione(string uri)
         {
-            if (uri.StartsWith(URL_BASE + "scheda_recensione.php"))
+            var link = uri.ToString();
+            if (!link.StartsWith("http"))
+                link = URL_BASE + link;
+            if (link.StartsWith(URL_BASE + "scheda_recensione.php"))
                 return true;
             return false;
         }
-        public static bool IsSoluzione(String uri)
+        public static bool IsSoluzione(string uri)
         {
-            if (uri.StartsWith(URL_BASE + "scheda_soluzione.php"))
+            var link = uri.ToString();
+            if (!link.StartsWith("http"))
+                link = URL_BASE + link;
+            if (link.StartsWith(URL_BASE + "scheda_soluzione.php"))
                 return true;
             return false;
         }
         public static bool IsGalleriaImmagini(String uri)
         {
-            if (uri.StartsWith(URL_BASE + "scheda_immagini.php"))
+            var link = uri.ToString();
+            if (!link.StartsWith("http"))
+                link = URL_BASE + link;
+            if (link.StartsWith(URL_BASE + "scheda_immagini.php"))
                 return true;
             return false;
         }
         public static bool IsPodcast(String uri)
         {
-            if (uri.StartsWith($"{URL_BASE}podcast.php"))
+            var link = uri.ToString();
+            if (!link.StartsWith("http"))
+                link = URL_BASE + link;
+            if (link.StartsWith($"{URL_BASE}podcast.php"))
                 return true;
             return false;
         }
         public static bool IsExtra(string uri)
         {
-            if (uri.StartsWith(URL_BASE + "scheda_extra.php"))
+            var link = uri.ToString();
+            if (!link.StartsWith("http"))
+                link = URL_BASE + link;
+            if (link.StartsWith(URL_BASE + "scheda_extra.php"))
                 return true;
             return false;
         }
         public static bool IsTrailer(string uri)
         {
-            if (uri.StartsWith(URL_BASE + "scheda_trailer.php"))
+            var link = uri.ToString();
+            if (!link.StartsWith("http"))
+                link = URL_BASE + link;
+            if (link.StartsWith(URL_BASE + "scheda_trailer.php"))
+                return true;
+            return false;
+        }
+        public static bool IsSaga(string url)
+        {
+            var link = url.ToString();
+            if (!link.StartsWith("http"))
+                link = URL_BASE + link;
+            if (link.StartsWith(URL_BASE + "schedario.php") && UrlUtils.GetUrlParameterValue(url, "saga")!=null)
                 return true;
             return false;
         }
