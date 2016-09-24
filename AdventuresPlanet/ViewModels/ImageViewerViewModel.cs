@@ -47,59 +47,8 @@ namespace AdventuresPlanet.ViewModels
             (_ScaricaImmagineCommand = new DelegateCommand(() =>
             {
                 var filename = UrlImage.Substring(UrlImage.LastIndexOf('/')+1);
-                DownloadImage(UrlImage, filename);
-                //downloader.DownloadImmagine(UrlImage, filename);
+                downloader.DownloadImmagine(UrlImage, filename);
             }));
-        
-        private async Task DownloadImage(string url, string filename, string titoloAvv = null)
-        {
-            bool error = false;
-            try
-            {
-                //var correctFolder = correctStringDirectory(titoloAvv);
-                StorageFolder folder = KnownFolders.PicturesLibrary;
-                StorageFolder folderAdv = await folder.CreateFolderAsync("AdventuresPlanet", CreationCollisionOption.OpenIfExists);
-                //StorageFolder folderImgs = await folderAdv.CreateFolderAsync(correctFolder, CreationCollisionOption.OpenIfExists);
-                //StorageFile s_file = await folderImgs.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
-                StorageFile s_file = await folderAdv.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
-                using (Stream imgBytes = await http.GetStreamAsync(new Uri(url)))
-                using (Stream sw = await s_file.OpenStreamForWriteAsync())
-                {
-                    imgBytes.CopyTo(sw);
-                }
-            }
-            catch (Exception e)
-            {
-                error = true;
-                Debug.WriteLine($"Download errore - {e.Message}");
-            }
-            finally
-            {
-                ToastContent toast = new ToastContent()
-                {
-                    ActivationType = ToastActivationType.Background,
-                    Visual = new ToastVisual()
-                    {
-                        AppLogoOverride = new ToastAppLogo()
-                        {
-                            Source = new ToastImageSource("ms-appx:///Assets/Store.png")
-                        },
-                        TitleText = new ToastText()
-                        {
-                            Text = !error ? "Download completato" : "Errore durante il download"
-                        },
-                        BodyTextLine1 = new ToastText()
-                        {
-                            Text = $"{(titoloAvv != null ? $"{titoloAvv} - " : string.Empty)}{filename}"
-                        }
-                    }
-                };
-                var xmlToast = toast.GetXml();
-                var notification = new ToastNotification(xmlToast);
-                ToastNotificationManager.CreateToastNotifier().Show(notification);
-            }
-        }
-        
         private string correctStringDirectory(string s)
         {
             return s.Replace(":", " ")

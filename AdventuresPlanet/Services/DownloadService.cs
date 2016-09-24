@@ -24,13 +24,11 @@ namespace AdventuresPlanet.Services
         public ObservableCollection<DownloadItem> ListaDownload { get; }
         public DownloadService()
         {
-            //var toastOk = new 
             downloader = new BackgroundDownloader();
             cts = new CancellationTokenSource();
             ListaDownload = new ObservableCollection<DownloadItem>();
             Init();
         }
-        private List<Task> tasks = new List<Task>();
         public async void Init()
         {
             LoadDownload();
@@ -46,7 +44,6 @@ namespace AdventuresPlanet.Services
             }
             if (downloads.Count > 0)
             {
-                //ist<Task> tasks = new List<Task>(downloads.Count);
                 foreach (DownloadOperation download in downloads)
                 {
                     //Log(String.Format(CultureInfo.CurrentCulture, "Discovered background download: {0}, Status: {1}", download.Guid, download.Progress.Status));
@@ -60,7 +57,6 @@ namespace AdventuresPlanet.Services
                         await download.AttachAsync();
                         var task = HandleDownloadAsync(downItem, true);
                         downItem.DownloadTask = task;
-                        tasks.Add(task);
                     }
                     else
                     {
@@ -75,17 +71,9 @@ namespace AdventuresPlanet.Services
                         AggiungiDownload(downItem);
                         var task = HandleDownloadAsync(downItem, true);
                         downItem.DownloadTask = task;
-                        tasks.Add(task);
                     }
                     
                 }
-
-                // Don't await HandleDownloadAsync() in the foreach loop since we would attach to the second
-                // download only when the first one completed; attach to the third download when the second one
-                // completes etc. We want to attach to all downloads immediately.
-                // If there are actions that need to be taken once downloads complete, await tasks here, outside
-                // the loop.
-                await Task.WhenAll(tasks);
             }
         }
         private void DownloadProgress(DownloadOperation download)
@@ -133,7 +121,6 @@ namespace AdventuresPlanet.Services
         {
             if (download.DownloadOp.Progress.TotalBytesToReceive!=0 && download.DownloadOp.Progress.TotalBytesToReceive == download.DownloadOp.Progress.BytesReceived)
             {
-                //await download.DownloadOp.AttachAsync();
                 RimuoviDownload(download);
                 return;
             }
@@ -181,7 +168,7 @@ namespace AdventuresPlanet.Services
         public void InterrompiDownload(DownloadItem down)
         {
             down.DownloadOp?.AttachAsync()?.Cancel();
-            RimuoviDownload(down);
+            RimuoviDownload(down, true);
         }
         public async void DownloadImmagine(string url, string filename, string titoloAvv = null)
         {
@@ -198,7 +185,7 @@ namespace AdventuresPlanet.Services
             {
                 DownloadOp = download,
                 DownloadPath = destFile.Path,
-                FriendlyName = filename,
+                FriendlyName = $"{(titoloAvv!=null?$"{titoloAvv} - ":string.Empty)}{filename}",
                 Link = url
             };
             AggiungiDownload(downItem);
@@ -240,17 +227,19 @@ namespace AdventuresPlanet.Services
                 ListaDownload.Insert(0, down);
             });
         }
-        private async void RimuoviDownload(DownloadItem down)
+        private async void RimuoviDownload(DownloadItem down, bool delete = false)
         {
             data.Values.Remove($"download_{down.Link}");
             ListaDownload.Remove(down);
-
-            try
+            if (delete)
             {
-                var file = await StorageFile.GetFileFromPathAsync(down.DownloadPath);
-                file.DeleteAsync();
+                try
+                {
+                    var file = await StorageFile.GetFileFromPathAsync(down.DownloadPath);
+                    file.DeleteAsync();
+                }
+                catch { }
             }
-            catch { }
         }
         private void LoadDownload()
         {
