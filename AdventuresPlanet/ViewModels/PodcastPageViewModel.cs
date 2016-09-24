@@ -183,7 +183,7 @@ namespace AdventuresPlanet.ViewModels
             });
         }
         private MessageDialog resumeDialog;
-        private DelegateCommand<PodcastItem> _playPodcast, _downPodcast;
+        private DelegateCommand<PodcastItem> _playPodcast, _downPodcast, _sharePodCmd;
         public DelegateCommand<PodcastItem> PlayPodcast =>
             _playPodcast ??
             (_playPodcast = new DelegateCommand<PodcastItem>(async (x) =>
@@ -238,7 +238,11 @@ namespace AdventuresPlanet.ViewModels
             try
             {
                 var file = await podcastDir.GetFileAsync(pod.Filename);
-                return file.Path;
+                var size = (await file.GetBasicPropertiesAsync()).Size;
+                if (size > 0)
+                    return file.Path;
+                else
+                    return string.Empty;
             }
             catch
             {
@@ -280,23 +284,38 @@ namespace AdventuresPlanet.ViewModels
                     {"Command", "Stop" }
                 });
             }));
-        private DelegateCommand _shareCmd, _aggiornaCmd, _fbCmd, _tgCmd, _mailCmd, _ytCmd;
-        public DelegateCommand CondividiCommand =>
-            _shareCmd ??
-            (_shareCmd = new DelegateCommand(() =>
-            {
-                DataTransferManager.ShowShareUI();
-            }));
+        private DelegateCommand _aggiornaCmd, _fbCmd, _tgCmd, _mailCmd, _ytCmd;
         private void OnShareRequested(DataTransferManager sender, DataRequestedEventArgs e)
         {
-            e.Request.Data.Properties.Title = $"Ascolta l'episodio {PodcastSelezionato.TitoloBG} del podcast Calavera Cafè";
-            e.Request.Data.SetWebLink(new Uri($"{PodcastSelezionato.Link}"));
+            e.Request.Data.Properties.Title = $"Ascolta l'episodio {podcastShare.TitoloBG} del podcast Calavera Cafè";
+            e.Request.Data.SetWebLink(new Uri($"{podcastShare.Link}"));
         }
+        private PodcastItem podcastShare;
+        public DelegateCommand<PodcastItem> CondividiPodcastCommand =>
+            _sharePodCmd ??
+            (_sharePodCmd = new DelegateCommand<PodcastItem>((x) =>
+            {
+                podcastShare = x;
+                DataTransferManager.ShowShareUI();
+            }));
         public DelegateCommand<PodcastItem> DownloadPodcastCommand =>
             _downPodcast ??
-            (_downPodcast = new DelegateCommand<PodcastItem>((podcast) =>
+            (_downPodcast = new DelegateCommand<PodcastItem>(async (podcast) =>
             {
-                downloader.DownloadPodcast(podcast);
+                var path = await PodcastLocalPath(podcast);
+                if (string.IsNullOrEmpty(path))
+                    downloader.DownloadPodcast(podcast);
+                else
+                {
+                    var msg = new MessageDialog("Il podcast è già stato scaricato in precedenza. Vuoi riscaricarlo?", "Attenzione")
+                    {
+                        CancelCommandIndex = 1,
+                        DefaultCommandIndex = 1
+                    };
+                    msg.Commands.Add(new UICommand("Si", (x) => { downloader.DownloadPodcast(podcast); }));
+                    msg.Commands.Add(new UICommand("No"));
+                    await msg.ShowAsync();
+                }
             }));
         public DelegateCommand AggiornaCommand =>
             _aggiornaCmd ??

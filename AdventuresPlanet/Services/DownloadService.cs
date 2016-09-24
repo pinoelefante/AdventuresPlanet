@@ -57,6 +57,7 @@ namespace AdventuresPlanet.Services
                     {
                         DownloadItem downItem = found.ElementAt(0);
                         downItem.DownloadOp = download;
+                        await download.AttachAsync();
                         var task = HandleDownloadAsync(downItem, true);
                         downItem.DownloadTask = task;
                         tasks.Add(task);
@@ -70,6 +71,7 @@ namespace AdventuresPlanet.Services
                             Link = download.RequestedUri.AbsoluteUri,
                             DownloadOp = download
                         };
+                        await download.AttachAsync();
                         AggiungiDownload(downItem);
                         var task = HandleDownloadAsync(downItem, true);
                         downItem.DownloadTask = task;
@@ -129,6 +131,12 @@ namespace AdventuresPlanet.Services
         }
         private async Task HandleDownloadAsync(DownloadItem download, bool isAttached = false)
         {
+            if (download.DownloadOp.Progress.TotalBytesToReceive == download.DownloadOp.Progress.BytesReceived)
+            {
+                //await download.DownloadOp.AttachAsync();
+                RimuoviDownload(download);
+                return;
+            }
             bool fail = false;
             try
             {
@@ -144,6 +152,7 @@ namespace AdventuresPlanet.Services
             }
             finally
             {
+                await download.DownloadOp.AttachAsync();
                 ToastContent toast = new ToastContent()
                 {
                     ActivationType = ToastActivationType.Background,

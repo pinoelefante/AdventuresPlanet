@@ -52,6 +52,8 @@
                     <MenuFlyout>
                         <MenuFlyoutItem Text="Riproduci" Command="{Binding DataContext.PlayPodcast, ElementName=page}" CommandParameter="{Binding}"/>
                         <MenuFlyoutItem Text="Scarica" Command="{Binding DataContext.DownloadPodcastCommand, ElementName=page}" CommandParameter="{Binding}"/>
+                        <MenuFlyoutSeparator/>
+                        <MenuFlyoutItem Text="Condividi" Command="{Binding DataContext.CondividiPodcastCommand, ElementName=page}" CommandParameter="{Binding}"/>
                     </MenuFlyout>
                 </FlyoutBase.AttachedFlyout>
             </RelativePanel>    
@@ -119,7 +121,6 @@
                   Margin="4,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0"
@@ -143,15 +144,6 @@
                         Margin="4,0">
                         <SymbolIcon Symbol="Stop"
                                 Foreground="White"/>
-                    </Button>
-                </StackPanel>
-
-
-                <StackPanel Grid.Column="1"
-                            Orientation="Horizontal">
-                    <Button Command="{Binding CondividiCommand}"
-                            Margin="4,0">
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;" Foreground="White"/>
                     </Button>
                 </StackPanel>
             </Grid>
