@@ -53,8 +53,9 @@ namespace Tasks
         }
         private void Notify(List<PodcastItem> pods)
         {
-            foreach (var item in pods)
+            for (int i = pods.Count - 1; i >= 0; i--)
             {
+                var item = pods[i];
                 ToastContent toast = new ToastContent()
                 {
                     ActivationType = ToastActivationType.Foreground,

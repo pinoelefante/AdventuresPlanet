@@ -1,5 +1,6 @@
 ﻿using AdventuresPlanetRuntime;
 using AdventuresPlanetRuntime.Data;
+using NotificationsExtensions.Tiles;
 using NotificationsExtensions.Toasts;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,10 @@ namespace Tasks
                 {
                     data.Values["bg_news"] = TimeUtils.GetUnixTimestamp();
                     if (listNews != null && listNews.Any())
-                        Notify(listNews);
+                    {
+                        LiveTileNotification(listNews);
+                        ToastNotification(listNews);
+                    }
                 }
             }
             deferral.Complete();
@@ -65,10 +69,11 @@ namespace Tasks
         {
             return true;
         }
-        private void Notify(List<News> news)
+        private void ToastNotification(List<News> news)
         {
-            foreach (var item in news)
+            for (int i = 0; i < news.Count; i++)
             {
+                var item = news[i];
                 ToastContent toast = new ToastContent()
                 {
                     ActivationType = ToastActivationType.Foreground,
@@ -93,7 +98,52 @@ namespace Tasks
                 var notification = new ToastNotification(xmlToast);
                 ToastNotificationManager.CreateToastNotifier().Show(notification);
             }
+        }
+        private void LiveTileNotification(List<News> listNews)
+        {
+            var item = listNews[0];
+            
+            TileContent content = new TileContent()
+            {
+                Visual = new TileVisual()
+                {
+                    TileMedium = new TileBinding()
+                    {
+                        Content = new TileBindingContentAdaptive()
+                        {
+                            BackgroundImage = new TileBackgroundImage()
+                            {
+                                Source = new TileImageSource(item.Immagine)
+                            }
+                        }
+                    },
 
+                    TileWide = new TileBinding()
+                    {
+                        Content = new TileBindingContentAdaptive()
+                        {
+                            Children =
+                            {
+                                new TileImage() {Align = TileImageAlign.Left, Source = new TileImageSource(item.Immagine), RemoveMargin = true },
+                                new TileText() { Text = item.Titolo, Style = TileTextStyle.Subtitle, Wrap = true, MaxLines = 2, Align = TileTextAlign.Auto }
+                            }
+                        }
+                    },
+
+                    TileSmall = new TileBinding()
+                    {
+                        Content = new TileBindingContentAdaptive()
+                        {
+                            Children =
+                            {
+                                new TileImage() { Source = new TileImageSource(item.Immagine) }
+                            }
+                        }
+                    }
+                }
+            };
+            var notification = new TileNotification(content.GetXml());
+            TileUpdateManager.CreateTileUpdaterForApplication("App").Update(notification);
         }
     }
 }
