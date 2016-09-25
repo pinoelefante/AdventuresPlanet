@@ -12,6 +12,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -148,6 +149,10 @@ namespace AdventuresPlanet.ViewModels
         private void FrameFacade_BackRequested(object sender, Template10.Common.HandledEventArgs e)
         {
             e.Handled = true;
+            OnBackClick();
+        }
+        public void OnBackClick()
+        {
             if (IsRecensioneSelezionata)
                 ChiudiRecensione();
             else if (IsCercaRecensione)

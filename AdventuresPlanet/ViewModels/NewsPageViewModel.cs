@@ -21,6 +21,8 @@ using AdventuresPlanetRuntime;
 using AdventuresPlanetRuntime.Data;
 using AdventuresPlanet.Views;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
+using Utils;
 
 namespace AdventuresPlanet.ViewModels
 {
@@ -32,7 +34,7 @@ namespace AdventuresPlanet.ViewModels
         {
             manager = avp;
             db = d;
-            ListaNews = new NewsCollection(manager);
+            ListaNews = new NewsCollection(manager, db);
         }
         private DataTransferManager _dataTransferManager;
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -52,9 +54,14 @@ namespace AdventuresPlanet.ViewModels
                 {
                     NewsSelezionata = parameter as News;
                 }
-                else if (parameter is string && Uri.IsWellFormedUriString(parameter.ToString(), UriKind.RelativeOrAbsolute))
+                else if (parameter is string)
                 {
-                    NewsSelezionata = await manager.LoadNews(parameter.ToString());
+                    if(Uri.IsWellFormedUriString(parameter.ToString(), UriKind.RelativeOrAbsolute))
+                        NewsSelezionata = await manager.LoadNews(parameter.ToString());
+                    else if (parameter.ToString().CompareTo("forzaAggiornamento") == 0)
+                    {
+
+                    }
                 }
             }
             NavigationService.FrameFacade.BackRequested += FrameFacade_BackRequested;
@@ -217,7 +224,12 @@ namespace AdventuresPlanet.ViewModels
                             else if (AVPManager.IsRecensione(link))
                                 NavigationService.Navigate(typeof(RecensioniPage), link);
                             else if (AVPManager.IsPodcast(link))
-                                NavigationService.Navigate(typeof(PodcastPage), link);
+                            {
+                                if(link.Equals(AVPManager.URL_BASE + "podcast.php"))
+                                    NavigationService.Navigate(typeof(PodcastPage));
+                                else
+                                    NavigationService.Navigate(typeof(PodcastPage), link);
+                            }
                             else if (AVPManager.IsGalleriaImmagini(link))
                                 NavigationService.Navigate(typeof(GalleriePage), link);
                             else if (AVPManager.IsTrailer(link) || AVPManager.IsExtra(link))
@@ -280,9 +292,11 @@ namespace AdventuresPlanet.ViewModels
             }
             private int currAnno, currMese;
             private AVPManager manager;
-            public NewsCollection(AVPManager man)
+            private AVPDatabase db;
+            public NewsCollection(AVPManager man, AVPDatabase d)
             {
                 manager = man;
+                db = d;
                 Reset();
             }
             public bool HasMoreItems
@@ -294,6 +308,24 @@ namespace AdventuresPlanet.ViewModels
                     return true;
                 }
             }
+            private Action<List<News>> _saveNews;
+            private Action<News> _addNews;
+            private Action<List<News>> SaveNews =>
+                _saveNews ??
+                (_saveNews = (x) =>
+                {
+                    db.InsertNews(x);
+                });
+            private Action<News> AddNews =>
+                _addNews ??
+                (_addNews = (x) =>
+                {
+                    WindowWrapper.Current().Dispatcher.Dispatch(() =>
+                    {
+                        Add(x);
+                    });
+                });
+            private ApplicationDataContainer data = ApplicationData.Current.LocalSettings;
             public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
             {
                 return Task.Run<LoadMoreItemsResult>(async () =>
@@ -302,14 +334,51 @@ namespace AdventuresPlanet.ViewModels
                     {
                         IsLoading = true;
                     });
-                    if (await manager.LoadListNews(currAnno, currMese, (n) =>
+                    bool found = false;
+                    if (data.Values.ContainsKey($"news_{currAnno.ToString("D4")}{currMese.ToString("D2")}"))
                     {
-                        WindowWrapper.Current().Dispatcher.Dispatch(
-                        () =>
+                        var news = db.SelectNews(currAnno, currMese);
+                        if (news.Any())
                         {
-                            Add(n);
-                        });
-                    }))
+                            foreach (var item in news)
+                                AddNews.Invoke(item);
+                            found = true;
+                        }
+                        else
+                        {
+                            data.Values.Remove($"news_{currAnno.ToString("D4")}{currMese.ToString("D2")}");
+                        }
+                    }
+                    else
+                    {
+                        if (currAnno == Now.Year && currMese == Now.Month && !IsToUpdate()) //non è da aggiornare
+                        {
+                            var dbFound = db.SelectNews(currAnno, currMese);
+                            if (dbFound.Any())
+                            {
+                                foreach (var item in dbFound)
+                                    AddNews.Invoke(item);
+                                found = true;
+                            }
+                        }
+                        if(!found) //da aggiornare
+                        {
+                            if (await manager.LoadListNews(currAnno, currMese, AddNews, SaveNews)) //news caricate dal sito web
+                            {
+                                if (IsMesePersistente(currAnno, currMese))
+                                    data.Values[$"news_{currAnno.ToString("D4")}{currMese.ToString("D2")}"] = true;
+                                else
+                                    manager.UpdateTimeNews = TimeUtils.GetUnixTimestamp();
+                                found = true;
+                            }
+                            else //errore durante il caricamento dal sito web
+                            {
+                                await Task.Delay(5000);
+                            }
+                        }
+                    }
+
+                    if (found) //cambio periodo dopo aver caricato le news
                     {
                         if (currMese == 1)
                         {
@@ -327,13 +396,26 @@ namespace AdventuresPlanet.ViewModels
 
                 }).AsAsyncOperation<LoadMoreItemsResult>();
             }
-
+            private DateTime Now;
             public void Reset()
             {
                 Clear();
-                DateTime now = DateTime.Now;
-                currAnno = now.Year;
-                currMese = now.Month;
+                Now = DateTime.Now;
+                currAnno = Now.Year;
+                currMese = Now.Month;
+            }
+            private bool IsToUpdate()
+            {
+                return TimeUtils.GetUnixTimestamp() > manager.UpdateTimeNews + 3600;
+            }
+            private bool IsMesePersistente(int anno, int mese)
+            {
+                if(anno == Now.Year)
+                {
+                    if (mese == Now.Month)
+                        return false;
+                }
+                return true;
             }
         }
     }

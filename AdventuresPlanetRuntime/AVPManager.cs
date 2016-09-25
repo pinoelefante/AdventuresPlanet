@@ -31,7 +31,7 @@ namespace AdventuresPlanetRuntime
             jsonClient.DefaultRequestHeaders.Accept.TryParseAdd("application/json");
         }
         public const string URL_BASE = "http://www.adventuresplanet.it/";
-        public async Task<bool> LoadListNews(int anno, int mese, Action<News> addAction = null)
+        public async Task<bool> LoadListNews(int anno, int mese, Action<News> addAction = null, Action<List<News>> saveAction = null)
         {
             try
             {
@@ -43,6 +43,7 @@ namespace AdventuresPlanetRuntime
                 doc.LoadHtml(response);
                 IEnumerable<HtmlNode> news = doc.DocumentNode.Descendants("div").Where(x => x.Attributes.Contains("class") && x.Attributes["class"].Value.Equals("main_news"));
                 Debug.WriteLine("news caricate: " + news.Count());
+                List<News> newsLoaded = new List<News>(news.Count());
                 foreach (HtmlNode node in news)
                 {
                     string data = node.Descendants("h1").ToArray()[0].InnerText.Trim();
@@ -75,7 +76,9 @@ namespace AdventuresPlanetRuntime
                         MeseLink = meselink
                     };
                     addAction?.Invoke(news_item);
+                    newsLoaded.Add(news_item);
                 }
+                saveAction?.Invoke(newsLoaded);
                 return true;
             }
             catch

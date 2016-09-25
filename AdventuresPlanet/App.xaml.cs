@@ -10,6 +10,8 @@ using Windows.UI.Core;
 using System.Diagnostics;
 using Windows.UI.Popups;
 using Windows.ApplicationModel.Background;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml.Controls;
 
 namespace AdventuresPlanet
 {
@@ -28,8 +30,8 @@ namespace AdventuresPlanet
 
         private async void App_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-#if DEBUG
             e.Handled = true;
+#if DEBUG
             await new MessageDialog(e.Message).ShowAsync();
 #else
             await new MessageDialog("Si è verificato un errore inaspettato").ShowAsync();
@@ -56,12 +58,15 @@ namespace AdventuresPlanet
             this.ForceShowShellBackButton = true;
             await Task.CompletedTask;
         }
-
         public override async Task OnStartAsync(StartKind startKind, IActivatedEventArgs args)
         {
             // long-running startup tasks go here
             //await Task.Delay(5000);
+            TaskRegister("NewsNotifier", "Tasks.NewsNotifier");
             TaskRegister("PodcastNotifier", "Tasks.PodcastNotifier");
+#if !DEBUG
+            ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
+#endif
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             NavigationService.Navigate(typeof(Views.NewsPage));
             await Task.CompletedTask;
@@ -85,19 +90,34 @@ namespace AdventuresPlanet
                     Name = name,
                     TaskEntryPoint = entry
                 };
+                BackgroundAccessStatus access;
+                BackgroundTaskRegistration reg;
                 switch (name)
                 {
                     case "PodcastNotifier":
-                        var access = await BackgroundExecutionManager.RequestAccessAsync();
+                        access = await BackgroundExecutionManager.RequestAccessAsync();
                         builder.IsNetworkRequested = true;
                         builder.CancelOnConditionLoss = true;
                         builder.SetTrigger(new TimeTrigger(90, false));
                         builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
                         builder.AddCondition(new SystemCondition(SystemConditionType.BackgroundWorkCostNotHigh));
-                        var reg = builder.Register();
+                        reg = builder.Register();
                         reg.Completed += (s, e) =>
                         {
                             Debug.WriteLine("Podcast Notifier background task complete");
+                        };
+                        break;
+                    case "NewsNotifier":
+                        access = await BackgroundExecutionManager.RequestAccessAsync();
+                        builder.IsNetworkRequested = true;
+                        builder.CancelOnConditionLoss = true;
+                        builder.SetTrigger(new TimeTrigger(60, false));
+                        builder.AddCondition(new SystemCondition(SystemConditionType.InternetAvailable));
+                        builder.AddCondition(new SystemCondition(SystemConditionType.BackgroundWorkCostNotHigh));
+                        reg = builder.Register();
+                        reg.Completed += (s, e) =>
+                        {
+                            Debug.WriteLine("News Notifier background task complete");
                         };
                         break;
                 }

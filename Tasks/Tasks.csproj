@@ -108,6 +108,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NewsNotifier.cs" />
     <Compile Include="PodcastNotifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -115,6 +116,10 @@
     <ProjectReference Include="..\AdventuresPlanetRuntime\AdventuresPlanetRuntime.csproj">
       <Project>{08F6E6C4-5C4C-4BF9-B2CF-AFC4BE1D0DDF}</Project>
       <Name>AdventuresPlanetRuntime</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{916391FC-11B9-4017-A35C-974BB30D2EFC}</Project>
+      <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

@@ -30,6 +30,7 @@ namespace AdventuresPlanet.Views
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
         }
+
         private RecensioniPageViewModel ViewModel => this.DataContext as RecensioniPageViewModel;
         private ScrollViewer scroll;
         private void OnLoaded(object sender, RoutedEventArgs e)

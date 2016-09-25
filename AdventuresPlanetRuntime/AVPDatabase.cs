@@ -42,8 +42,44 @@ namespace AdventuresPlanetRuntime
         {
             using (var db = DBConnection)
             {
-                return db.Table<News>().Where(x => x.MeseLink.CompareTo($"{anno.ToString("D4")}{mese.ToString("D2")}") == 0);
+                try
+                {
+                    var monthGroup = $"{anno.ToString("D4")}{mese.ToString("D2")}";
+                    var newsFound = db.Table<News>().Where(x => x.MeseLink.Equals(monthGroup));
+                    return newsFound.OrderByDescending(x => x.Id).ToList();
+                }
+                catch(Exception e)
+                {
+                    Debug.WriteLine(e.Message);
+                    return new List<News>(1);
+                }
+                
             }
+        }
+        public bool InsertNews(News n)
+        {
+            using(var db = DBConnection)
+            {
+                try
+                {
+                    db.Insert(n);
+                    return true;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+        }
+        public List<News> InsertNews(IEnumerable<News> listNews)
+        {
+            List<News> inserite = new List<News>();
+            for(int i = listNews.Count() - 1; i >= 0; i--)
+            {
+                if (InsertNews(listNews.ElementAt(i)))
+                    inserite.Add(listNews.ElementAt(i));
+            }
+            return inserite;
         }
         public void InsertAll<T>(IEnumerable<T> list)
         {
