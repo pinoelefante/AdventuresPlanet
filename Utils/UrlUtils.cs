@@ -34,5 +34,9 @@ namespace Utils
             }
             return false;
         }
+        public static string GetFilenameFromUrl(string url)
+        {
+            return url.Substring(url.LastIndexOf('/') + 1);
+        }
     }
 }

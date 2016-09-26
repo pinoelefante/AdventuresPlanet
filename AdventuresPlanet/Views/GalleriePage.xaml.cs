@@ -27,5 +27,20 @@ namespace AdventuresPlanet.Views
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
         }
+
+        private void ResetZoom(object sender, TappedRoutedEventArgs e)
+        {
+            imageContainer.ChangeView(imageContainer.HorizontalOffset, imageContainer.VerticalOffset, 1);
+        }
+
+        private void ZoomOut(object sender, TappedRoutedEventArgs e)
+        {
+            imageContainer.ChangeView(imageContainer.HorizontalOffset, imageContainer.VerticalOffset, imageContainer.ZoomFactor - 0.25f);
+        }
+
+        private void ZoomIn(object sender, TappedRoutedEventArgs e)
+        {
+            imageContainer.ChangeView(imageContainer.HorizontalOffset, imageContainer.VerticalOffset, imageContainer.ZoomFactor + 0.25f);
+        }
     }
 }

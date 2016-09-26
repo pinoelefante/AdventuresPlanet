@@ -8,6 +8,7 @@
     xmlns:controls="using:Template10.Controls"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:triggers="using:WindowsStateTriggers"
     mc:Ignorable="d"
     DataContext="{Binding GalleriePageVM, Source={StaticResource Locator}}">
 
@@ -27,6 +28,19 @@
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="VisualStateGroup">
+                <VisualState x:Name="MobileState">
+                    <VisualState.StateTriggers>
+                        <triggers:DeviceFamilyStateTrigger DeviceFamily="Mobile"/>
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="zoomController.Visibility" Value="Collapsed"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition />
@@ -36,6 +50,7 @@
                 <AppBarButton Label="Condividi" Foreground="White" Command="{Binding CondividiCommand}" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource BoolVisibility}}">
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
                 </AppBarButton>
+                <AppBarButton Icon="Download" Label="Scarica" Command="{Binding ScaricaImmagineCommand}" Visibility="{Binding IsImmagineSelezionata, Converter={StaticResource BoolVisibility}}" Foreground="White"/>
                 <AppBarButton Label="Cerca" Icon="Find" Foreground="White" Command="{Binding ToggleSearch}" IsEnabled="{Binding IsCaricaGallerie, Converter={StaticResource NotBool}}" Visibility="{Binding IsGalleriaSelezionata, Converter={StaticResource NotBoolVisibility}}" />
             </controls:PageHeader.PrimaryCommands>
             <controls:PageHeader.SecondaryCommands>
@@ -159,6 +174,35 @@
                     </DataTemplate>
                 </GridView.ItemTemplate>
             </GridView>
+        </Grid>
+        
+        <!--#region ImageViewer-->
+        <Grid Grid.Row="1" Visibility="{Binding IsImmagineSelezionata, Converter={StaticResource BoolVisibility}}" Background="White">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" VerticalAlignment="Stretch" Command="{Binding PrevImageCommand}" Canvas.ZIndex="10" BorderThickness="0" Padding="8,0" VerticalContentAlignment="Center" Visibility="{Binding HasPrevImage, Converter={StaticResource BoolVisibility}}" Background="#33D3D3D3" Opacity="0.9">
+                <SymbolIcon Symbol="Back"/>
+            </Button>
+            <ScrollViewer x:Name="imageContainer" Grid.Column="0" Grid.ColumnSpan="3" HorizontalScrollMode="Auto" VerticalScrollMode="Auto" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ZoomMode="Enabled" MaxZoomFactor="3" MinZoomFactor="0.5">
+                <Image Source="{Binding ImmagineSelezionata.ImageLink}" Stretch="None"/>
+            </ScrollViewer>
+            <Button Grid.Column="2" VerticalAlignment="Stretch" Command="{Binding NextImageCommand}" Canvas.ZIndex="10" BorderThickness="0" Padding="8,0" VerticalContentAlignment="Center" Visibility="{Binding HasNextImage, Converter={StaticResource BoolVisibility}}" Background="#33D3D3D3" Opacity="0.9">
+                <SymbolIcon Symbol="Forward"/>
+            </Button>
+            <StackPanel x:Name="zoomController" Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Bottom" Background="Black" Opacity="0.9" Margin="0,0,0,48">
+                <Button Tapped="ZoomOut" Margin="4,0" Background="Transparent" Foreground="White">
+                    <SymbolIcon Symbol="ZoomOut"/>
+                </Button>
+                <Button Tapped="ResetZoom" Margin="4,0" Background="Transparent" Foreground="White">
+                    <SymbolIcon Symbol="Zoom"/>
+                </Button>
+                <Button Tapped="ZoomIn" Margin="4,0" Background="Transparent" Foreground="White">
+                    <SymbolIcon Symbol="ZoomIn"/>
+                </Button>
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>

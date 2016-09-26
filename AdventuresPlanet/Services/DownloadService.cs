@@ -175,7 +175,7 @@ namespace AdventuresPlanet.Services
             StorageFolder folder = KnownFolders.PicturesLibrary;
             StorageFolder folderAdv = await folder.CreateFolderAsync("AdventuresPlanet", CreationCollisionOption.OpenIfExists);
             if (!string.IsNullOrEmpty(titoloAvv))
-                folderAdv = await folderAdv.CreateFolderAsync(titoloAvv, CreationCollisionOption.OpenIfExists);
+                folderAdv = await folderAdv.CreateFolderAsync(correctStringDirectory(titoloAvv), CreationCollisionOption.OpenIfExists);
             StorageFile destFile = await folderAdv.CreateFileAsync(filename, CreationCollisionOption.GenerateUniqueName);
 
             DownloadOperation download = downloader.CreateDownload(new Uri(url), destFile);
@@ -191,6 +191,14 @@ namespace AdventuresPlanet.Services
             AggiungiDownload(downItem);
             var task = HandleDownloadAsync(downItem);
             downItem.DownloadTask = task;
+        }
+        private string correctStringDirectory(string s)
+        {
+            return s.Replace(":", " ")
+                    .Replace("\"", " ")
+                    .Replace("<", " ")
+                    .Replace(">", " ")
+                    .Replace("|", " ");
         }
         public async void DownloadPodcast(PodcastItem podcast)
         {

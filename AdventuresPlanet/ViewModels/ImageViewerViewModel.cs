@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
+using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml.Navigation;
@@ -25,9 +26,19 @@ namespace AdventuresPlanet.ViewModels
         public override Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             if (parameter != null)
-                UrlImage = parameter.ToString();
+            {
+                if(parameter is string)
+                    UrlImage = parameter.ToString();
+                else if(parameter is ValueSet)
+                {
+                    ValueSet vs = parameter as ValueSet;
+                    titoloAvv = vs["TitoloAvventura"].ToString();
+                    UrlImage = vs["Link"].ToString();
+                }
+            }
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
+        private string titoloAvv;
         private string _urlImage;
         public string UrlImage
         {
@@ -47,15 +58,7 @@ namespace AdventuresPlanet.ViewModels
             (_ScaricaImmagineCommand = new DelegateCommand(() =>
             {
                 var filename = UrlImage.Substring(UrlImage.LastIndexOf('/')+1);
-                downloader.DownloadImmagine(UrlImage, filename);
+                downloader.DownloadImmagine(UrlImage, filename, titoloAvv);
             }));
-        private string correctStringDirectory(string s)
-        {
-            return s.Replace(":", " ")
-                    .Replace("\"", " ")
-                    .Replace("<", " ")
-                    .Replace(">", " ")
-                    .Replace("|", " ");
-        }
     }
 }

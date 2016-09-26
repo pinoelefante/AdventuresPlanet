@@ -1,4 +1,5 @@
-﻿using AdventuresPlanetRuntime;
+﻿using AdventuresPlanet.Services;
+using AdventuresPlanetRuntime;
 using AdventuresPlanetRuntime.Data;
 using System;
 using System.Collections.Generic;
@@ -22,11 +23,13 @@ namespace AdventuresPlanet.ViewModels
         private AVPManager manager;
         private AVPDatabase db;
         private AVPPreferiti prefs;
-        public GalleriaPageViewModel(AVPManager m, AVPDatabase d, AVPPreferiti p)
+        private DownloadService downloader;
+        public GalleriaPageViewModel(AVPManager m, AVPDatabase d, AVPPreferiti p, DownloadService down)
         {
             manager = m;
             db = d;
             prefs = p;
+            downloader = down;
             ListaGallerie = new Dictionary<string, ObservableCollection<GalleriaItem>>();
             ListaGallerie.Add("#", new ObservableCollection<GalleriaItem>());
             for (char c = 'A'; c <= 'Z'; c++)
@@ -120,7 +123,9 @@ namespace AdventuresPlanet.ViewModels
         private void FrameFacade_BackRequested(object sender, HandledEventArgs e)
         {
             e.Handled = true;
-            if (IsGalleriaSelezionata)
+            if (IsImmagineSelezionata)
+                IsImmagineSelezionata = false;
+            else if (IsGalleriaSelezionata)
                 IsGalleriaSelezionata = false;
             else if (IsCercaGalleria)
                 IsCercaGalleria = false;
@@ -242,7 +247,7 @@ namespace AdventuresPlanet.ViewModels
             {
                 GalleriaSelezionata = x;
             }));
-        private bool _isImageSelected;
+        private bool _isImageSelected=false;
         public bool IsImmagineSelezionata { get { return _isImageSelected; } set { Set(ref _isImageSelected, value); } }
         private AdvImage _imgSelected;
         public AdvImage ImmagineSelezionata { get { return _imgSelected; } set { Set(ref _imgSelected, value); } }
@@ -251,9 +256,58 @@ namespace AdventuresPlanet.ViewModels
             _imgSelCmd ??
             (_imgSelCmd = new DelegateCommand<AdvImage>((x) =>
             {
-                NavigationService.Navigate(typeof(Views.ImageViewerPage), x.ImageLink);
+                IsImmagineSelezionata = true;
+                ImmagineSelezionata = x;
+                RaisePropertyChanged(() => HasNextImage);
+                RaisePropertyChanged(() => HasPrevImage);
             }));
-        private DelegateCommand _shareCmd, _aggiornaCmd;
+        private DelegateCommand _downImgCmd;
+        public DelegateCommand ScaricaImmagineCommand =>
+            _downImgCmd ??
+            (_downImgCmd = new DelegateCommand(() =>
+            {
+                var url = ImmagineSelezionata.ImageLink;
+                downloader.DownloadImmagine(url, UrlUtils.GetFilenameFromUrl(url), GalleriaSelezionata.Titolo);
+            }));
+        public bool HasNextImage
+        {
+            get
+            {
+                if (ImmagineSelezionata != null)
+                {
+                    var index = Immagini.IndexOf(ImmagineSelezionata);
+                    if (Immagini.Last() != ImmagineSelezionata)
+                        return true;
+                }
+                return false;
+            }
+        }
+        public bool HasPrevImage
+        {
+            get
+            {
+                if (ImmagineSelezionata != null)
+                {
+                    return Immagini.IndexOf(ImmagineSelezionata) > 0;
+                }
+                return false;
+            }
+        }
+        public DelegateCommand NextImageCommand =>
+            _nextImgCmd ??
+            (_nextImgCmd = new DelegateCommand(() =>
+            {
+                var index = Immagini.IndexOf(ImmagineSelezionata);
+                SelezionaImmagineCommand.Execute(Immagini[index + 1]);
+            }));
+        public DelegateCommand PrevImageCommand =>
+            _prevImgCmd ??
+            (_prevImgCmd = new DelegateCommand(() =>
+            {
+                var index = Immagini.IndexOf(ImmagineSelezionata);
+                SelezionaImmagineCommand.Execute(Immagini[index - 1]);
+            }));
+        private DelegateCommand _shareCmd, _aggiornaCmd, _nextImgCmd, _prevImgCmd;
         public DelegateCommand CondividiCommand =>
             _shareCmd ??
             (_shareCmd = new DelegateCommand(() =>

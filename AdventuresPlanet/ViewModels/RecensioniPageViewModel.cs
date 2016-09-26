@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Template10.Common;
 using Template10.Mvvm;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI;
@@ -380,7 +381,11 @@ namespace AdventuresPlanet.ViewModels
                         immagine.DoubleTapped += (sender, e) =>
                         {
                             SalvaPosizione(ListaComponenti.IndexOf(immagine));
-                            NavigationService.Navigate(typeof(Views.ImageViewerPage), url);
+                            NavigationService.Navigate(typeof(ImageViewerPage), new ValueSet()
+                            {
+                                { "TitoloAvventura", RecensioneSelezionata.Titolo },
+                                { "Link", url }
+                            });
                         };
                         ListaComponenti.Add(immagine);
                     }
