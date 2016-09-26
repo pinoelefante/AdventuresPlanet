@@ -56,6 +56,7 @@ namespace Tasks
                 if (ok)
                 {
                     data.Values["bg_news"] = TimeUtils.GetUnixTimestamp();
+                    adventuresPlanet.UpdateTimeNews = TimeUtils.GetUnixTimestamp();
                     if (listNews != null && listNews.Any())
                     {
                         LiveTileNotification(listNews);
@@ -122,9 +123,9 @@ namespace Tasks
                     {
                         Content = new TileBindingContentAdaptive()
                         {
+                            BackgroundImage = new TileBackgroundImage() { Source = new TileImageSource(item.Immagine) },
                             Children =
                             {
-                                new TileImage() {Align = TileImageAlign.Left, Source = new TileImageSource(item.Immagine), RemoveMargin = true },
                                 new TileText() { Text = item.Titolo, Style = TileTextStyle.Subtitle, Wrap = true, MaxLines = 2, Align = TileTextAlign.Auto }
                             }
                         }
@@ -136,7 +137,7 @@ namespace Tasks
                         {
                             Children =
                             {
-                                new TileImage() { Source = new TileImageSource(item.Immagine) }
+                                new TileImage() { Source = new TileImageSource(item.Immagine), RemoveMargin = true }
                             }
                         }
                     }

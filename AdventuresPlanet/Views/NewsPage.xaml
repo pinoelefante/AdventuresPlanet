@@ -35,6 +35,8 @@
                 <TextBlock Text="{Binding Titolo}"
                            x:Name="itemTitle"
                            TextWrapping="Wrap"
+                           TextTrimming="CharacterEllipsis"
+                           MaxLines="2"
                            Style="{ThemeResource TitleTextBlockStyle}"
                            RelativePanel.AlignTopWithPanel="True"/>
                 <TextBlock Text="{Binding AnteprimaNews}"
