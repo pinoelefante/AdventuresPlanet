@@ -38,5 +38,20 @@ namespace Utils
         {
             return url.Substring(url.LastIndexOf('/') + 1);
         }
+        public static bool IsDomain(string url, string domain, bool ignoreWWW = true)
+        {
+            if (Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            {
+                var domainCompare = domain.ToLower();
+                var host = new Uri(url).Host.ToLower();
+                if (ignoreWWW)
+                {
+                    domain = domainCompare.Replace("www.", "");
+                    host = host.Replace("www.", "");
+                }
+                return host.CompareTo(domain) == 0;
+            }
+            return false;
+        }
     }
 }

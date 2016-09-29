@@ -167,6 +167,8 @@ namespace AdventuresPlanet.ViewModels
                 });
                 if (!await manager.LoadNews(NewsSelezionata))
                     await new MessageDialog("Si è verificato un errore").ShowAsync();
+                else
+                    db.Update(NewsSelezionata);
                 WindowWrapper.Current().Dispatcher.Dispatch(() =>
                 {
                     IsCaricaNews = false;
@@ -177,7 +179,8 @@ namespace AdventuresPlanet.ViewModels
         private async void componiNews()
         {
             ListComponents.Clear();
-            await CaricaNews();
+            if(string.IsNullOrEmpty(NewsSelezionata.CorpoNews))
+                await CaricaNews();
             if (NewsSelezionata?.TestoRich != null && NewsSelezionata?.TestoRich.Count > 0)
             {
                 TextBlock c_news = new TextBlock();
@@ -232,7 +235,7 @@ namespace AdventuresPlanet.ViewModels
                             }
                             else if (AVPManager.IsGalleriaImmagini(link))
                                 NavigationService.Navigate(typeof(GalleriePage), link);
-                            else if (AVPManager.IsTrailer(link) || AVPManager.IsExtra(link))
+                            else if (AVPManager.IsTrailer(link) || AVPManager.IsExtra(link) || UrlUtils.IsDomain(link, "youtube.com"))
                                 NavigationService.Navigate(typeof(VideoPlayerPage), link);
                             else if (AVPManager.IsSaga(link))
                                 NavigationService.Navigate(typeof(SagaPage), link);
@@ -243,7 +246,7 @@ namespace AdventuresPlanet.ViewModels
                         link_text.Text = text;
                         link_text.FontWeight = FontWeights.Bold;
 
-                        if (AVPManager.IsSoluzione(link) || AVPManager.IsRecensione(link) || AVPManager.IsPodcast(link) || AVPManager.IsGalleriaImmagini(link) || AVPManager.IsExtra(link) || AVPManager.IsTrailer(link) || AVPManager.IsSaga(link))
+                        if (AVPManager.IsSoluzione(link) || AVPManager.IsRecensione(link) || AVPManager.IsPodcast(link) || AVPManager.IsGalleriaImmagini(link) || AVPManager.IsExtra(link) || AVPManager.IsTrailer(link) || AVPManager.IsSaga(link) || UrlUtils.IsDomain(link, "youtube.com"))
                         {
                             link_text.Foreground = new SolidColorBrush(Colors.Orange);
                         }

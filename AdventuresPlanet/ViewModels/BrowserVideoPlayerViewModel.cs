@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
+using Utils;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 
@@ -66,28 +67,43 @@ namespace AdventuresPlanet.ViewModels
                 {
                     var link = parameter.ToString();
                     List<string> componenti = null;
-                    if (AVPManager.IsExtra(link))
-                        componenti = await manager.GetComponentsFrom(link, "scheda_completa");
-                    else if (AVPManager.IsTrailer(link))
-                        componenti = await manager.GetComponentsFrom(link, "scheda_video");
-                    if (componenti?.Count > 0)
+                    if (UrlUtils.IsDomain(link, "youtube.com"))
                     {
-                        foreach (var item in componenti)
+                        var videoId = UrlUtils.GetUrlParameterValue(link, "v");
+                        if (!string.IsNullOrEmpty(videoId))
                         {
-                            if (item.StartsWith("@VIDEO"))
-                            {
-                                string video = item.Replace("@VIDEO;", "");
-                                string[] values = video.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                                string videosrc = values[0];
-                                ElencoVideo.Add(videosrc);
-                            }
+                            ElencoVideo.Add($"https://www.youtube.com/embed/{videoId}");
                         }
-                        if (ElencoVideo.Any())
-                            CurrentVideo = 0;
+                        else
+                        {
+                            await new MessageDialog("Si è verificato un errore").ShowAsync();
+                        }
                     }
                     else
                     {
-                        await new MessageDialog("Si è verificato un errore").ShowAsync();
+                        if (AVPManager.IsExtra(link))
+                            componenti = await manager.GetComponentsFrom(link, "scheda_completa");
+                        else if (AVPManager.IsTrailer(link))
+                            componenti = await manager.GetComponentsFrom(link, "scheda_video");
+                        if (componenti?.Count > 0)
+                        {
+                            foreach (var item in componenti)
+                            {
+                                if (item.StartsWith("@VIDEO"))
+                                {
+                                    string video = item.Replace("@VIDEO;", "");
+                                    string[] values = video.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                                    string videosrc = values[0];
+                                    ElencoVideo.Add(videosrc);
+                                }
+                            }
+                            if (ElencoVideo.Any())
+                                CurrentVideo = 0;
+                        }
+                        else
+                        {
+                            await new MessageDialog("Si è verificato un errore").ShowAsync();
+                        }
                     }
                 }
             }
