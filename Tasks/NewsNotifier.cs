@@ -5,6 +5,7 @@ using NotificationsExtensions.Toasts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Utils;
@@ -60,7 +61,7 @@ namespace Tasks
                     if (listNews != null && listNews.Any())
                     {
                         LiveTileNotification(listNews);
-                        ToastNotification(listNews);
+                        ToastNotification(listNews, anno, mese);
                     }
                 }
             }
@@ -70,7 +71,7 @@ namespace Tasks
         {
             return true;
         }
-        private void ToastNotification(List<News> news)
+        private void ToastNotification(List<News> news, int anno, int mese)
         {
             for (int i = 0; i < news.Count; i++)
             {
@@ -93,7 +94,8 @@ namespace Tasks
                         {
                             Text = item.AnteprimaNews
                         }
-                    }
+                    },
+                    Launch = $"action=viewNews&link={WebUtility.UrlEncode(item.Link)}&titolo={WebUtility.UrlEncode(item.Titolo)}&anteprima={WebUtility.UrlEncode(item.AnteprimaNews)}&data={WebUtility.UrlEncode(item.DataPubblicazione)}&img={WebUtility.UrlDecode(item.Immagine)}&meseLink={anno.ToString("D4")+mese.ToString("D2")}&id={item.Id}"
                 };
                 var xmlToast = toast.GetXml();
                 var notification = new ToastNotification(xmlToast);

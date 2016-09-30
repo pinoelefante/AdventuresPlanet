@@ -12,6 +12,8 @@ using Windows.UI.Popups;
 using Windows.ApplicationModel.Background;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
+using Utils;
+using AdventuresPlanetRuntime.Data;
 
 namespace AdventuresPlanet
 {
@@ -68,8 +70,50 @@ namespace AdventuresPlanet
             ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
 #endif
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            NavigationService.Navigate(typeof(Views.NewsPage));
+            if(args is ToastNotificationActivatedEventArgs)
+            {
+                var argsToast = args as ToastNotificationActivatedEventArgs;
+                ManageToastLaunch(argsToast);
+            }
+            else
+                NavigationService.Navigate(typeof(Views.NewsPage));
             await Task.CompletedTask;
+        }
+        private void ManageToastLaunch(ToastNotificationActivatedEventArgs toast)
+        {
+            var parameters = UrlUtils.GetUrlParameters(toast.Argument);
+            switch (parameters["action"])
+            {
+                case "viewNews":
+                    {
+                        News news = new News()
+                        {
+                            AnteprimaNews = parameters["anteprima"],
+                            DataPubblicazione = parameters["data"],
+                            Immagine = parameters["img"],
+                            Link = parameters["link"],
+                            Titolo = parameters["titolo"],
+                            MeseLink = parameters["meseLink"],
+                            Id = Int32.Parse(parameters["id"])
+                        };
+                        NavigationService.Navigate(typeof(Views.NewsPage), news);
+                    }
+                    break;
+                case "listenPodcast":
+                    break;
+                case "viewRecensione":
+                    break;
+                case "viewSoluzione":
+                    break;
+                case "viewGalleria":
+                    break;
+                case "viewTrailer":
+                    break;
+                default:
+                    NavigationService.Navigate(typeof(Views.NewsPage));
+                    break;
+            }
+            
         }
         private async void TaskRegister(string name, string entry)
         {

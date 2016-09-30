@@ -110,14 +110,21 @@ namespace AdventuresPlanetRuntime
         }
         public async Task<Boolean> LoadNews(News n)
         {
-            News resp = await LoadNews(n.Link);
-            if(resp == null)
-                return false;
-            else
+            try
             {
-                n.CorpoNews = resp.CorpoNews;
-                n.TestoRich = resp.TestoRich;
+                string response = await GetStringAsync(n.Link);
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(response);
+
+                HtmlNode news_node = doc.DocumentNode.Descendants("p").Where(x => x.Attributes.Contains("class") && x.Attributes["class"].Value.Equals("news")).ToArray()[0];
+                n.CorpoNews = WebUtility.HtmlDecode(news_node.InnerText.Trim());
+                n.TestoRich = ParseHtmlNews(news_node);
                 return true;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                return false;
             }
         }
         private List<String> ParseHtmlNews(HtmlNode node)

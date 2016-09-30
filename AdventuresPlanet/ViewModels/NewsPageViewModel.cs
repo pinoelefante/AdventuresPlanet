@@ -23,6 +23,9 @@ using AdventuresPlanet.Views;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Utils;
+using NotificationsExtensions.Toasts;
+using Windows.UI.Notifications;
+using System.Net;
 
 namespace AdventuresPlanet.ViewModels
 {
@@ -58,10 +61,6 @@ namespace AdventuresPlanet.ViewModels
                 {
                     if(Uri.IsWellFormedUriString(parameter.ToString(), UriKind.RelativeOrAbsolute))
                         NewsSelezionata = await manager.LoadNews(parameter.ToString());
-                    else if (parameter.ToString().CompareTo("forzaAggiornamento") == 0)
-                    {
-
-                    }
                 }
             }
             NavigationService.FrameFacade.BackRequested += FrameFacade_BackRequested;
@@ -140,7 +139,7 @@ namespace AdventuresPlanet.ViewModels
                 else
                     NewsSelezionata = x;
             }));
-        private bool _isNewsSelezionata, _isCaricaNews;
+        private bool _isCaricaNews;
         private News _newsSelezionata;
         public bool IsNewsSelezionata { get { return NewsSelezionata!=null; } }
         public bool IsCaricaNews { get { return _isCaricaNews; } set { Set(ref _isCaricaNews, value); } }
@@ -168,7 +167,10 @@ namespace AdventuresPlanet.ViewModels
                 if (!await manager.LoadNews(NewsSelezionata))
                     await new MessageDialog("Si è verificato un errore").ShowAsync();
                 else
-                    db.Update(NewsSelezionata);
+                {
+                    if(NewsSelezionata.Id > 0)
+                        db.Update(NewsSelezionata);
+                }
                 WindowWrapper.Current().Dispatcher.Dispatch(() =>
                 {
                     IsCaricaNews = false;
