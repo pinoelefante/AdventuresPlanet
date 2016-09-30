@@ -4,6 +4,7 @@ using NotificationsExtensions.Toasts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Background;
@@ -73,14 +74,18 @@ namespace Tasks
                         BodyTextLine1 = new ToastText()
                         {
                             Text = item.TitoloBG
+                        },
+                        BodyTextLine2 = new ToastText()
+                        {
+                            Text = item.Descrizione
                         }
-                    }
+                    },
+                    Launch = $"action=listenPodcast&titolo={WebUtility.UrlEncode(item.Titolo)}&link={WebUtility.UrlEncode(item.Link)}&img={WebUtility.UrlEncode(item.Immagine)}&data={WebUtility.UrlEncode(item.Data)}&descrizione={WebUtility.UrlEncode(item.Descrizione)}"
                 };
                 var xmlToast = toast.GetXml();
                 var notification = new ToastNotification(xmlToast);
                 ToastNotificationManager.CreateToastNotifier().Show(notification);
             }
-            
         }
     }
 }

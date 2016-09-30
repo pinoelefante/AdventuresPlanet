@@ -59,7 +59,10 @@ namespace AdventuresPlanet.ViewModels
             if (parameter != null)
             {
                 if (parameter is PodcastItem)
+                {
                     PlayPodcast.Execute(parameter);
+                    AggiornaPodcast();
+                }
                 else if (parameter is string && Uri.IsWellFormedUriString(parameter.ToString(), UriKind.RelativeOrAbsolute))
                 {
                     if (loadPodTask != null) await loadPodTask;

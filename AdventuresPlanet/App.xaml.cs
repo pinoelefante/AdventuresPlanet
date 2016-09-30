@@ -100,6 +100,17 @@ namespace AdventuresPlanet
                     }
                     break;
                 case "listenPodcast":
+                    {
+                        PodcastItem podcast = new PodcastItem()
+                        {
+                            Data = parameters["data"],
+                            Descrizione = parameters["descrizione"],
+                            Immagine = parameters["img"],
+                            Link = parameters["link"],
+                            Titolo = parameters["titolo"]
+                        };
+                        NavigationService.Navigate(typeof(Views.PodcastPage), podcast);
+                    }
                     break;
                 case "viewRecensione":
                     break;
