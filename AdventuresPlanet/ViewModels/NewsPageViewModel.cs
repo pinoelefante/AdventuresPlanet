@@ -104,6 +104,8 @@ namespace AdventuresPlanet.ViewModels
                     }
                     await CloseDialog.ShowAsync();
                 }
+                else
+                    App.Current.Exit();
             }
         }
         private DelegateCommand _shareCmd, _openInBrowserCmd;

@@ -20,7 +20,7 @@
             <RowDefinition Height="Auto"/> <!-- Disclaimer -->
             <RowDefinition Height="Auto"/> <!-- Versione app -->
         </Grid.RowDefinitions>
-        <controls:PageHeader />
+        <!--<controls:PageHeader />-->
 
         <Image x:Name="imageSplash" Grid.Row="1" Stretch="Uniform" MaxWidth="600" Source="ms-appx:///Assets/SplashScreen.png"/>
 
