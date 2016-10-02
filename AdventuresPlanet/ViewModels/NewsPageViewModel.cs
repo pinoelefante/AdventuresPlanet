@@ -98,7 +98,7 @@ namespace AdventuresPlanet.ViewModels
                 {
                     if (CloseDialog == null)
                     {
-                        CloseDialog = new MessageDialog("Vuoi uscire dall'applicazione?", "Chiusura applicazione") { CancelCommandIndex = 1, DefaultCommandIndex = 1 };
+                        CloseDialog = new MessageDialog("Vuoi uscire dall'applicazione?", "Chiusura applicazione") { CancelCommandIndex = 1, DefaultCommandIndex = 0 };
                         CloseDialog.Commands.Add(new UICommand("Si", (c) => { App.Current.Exit(); }));
                         CloseDialog.Commands.Add(new UICommand("No"));
                     }
@@ -161,6 +161,7 @@ namespace AdventuresPlanet.ViewModels
                 RaisePropertyChanged(() => IsNewsSelezionata);
                 if (value != null)
                 {
+                    ToastNotificationManager.History.Remove(value.Id.ToString(), "newsGroup");
                     componiNews();
                 }
             }

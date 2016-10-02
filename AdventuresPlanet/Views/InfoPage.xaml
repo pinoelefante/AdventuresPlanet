@@ -1,0 +1,56 @@
+﻿<Page
+    x:Class="AdventuresPlanet.Views.InfoPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AdventuresPlanet.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:controls="using:Template10.Controls"
+    DataContext="{Binding InfoVM, Source={StaticResource Locator}}">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/> <!-- Contatta sviluppatore -->
+            <RowDefinition Height="Auto"/> <!-- Dona -->
+            <RowDefinition Height="Auto"/> <!-- Vai a sito -->
+            <RowDefinition Height="Auto"/> <!-- Vota app -->
+            <RowDefinition Height="Auto"/> <!-- Disclaimer -->
+            <RowDefinition Height="Auto"/> <!-- Versione app -->
+        </Grid.RowDefinitions>
+        <controls:PageHeader />
+
+        <Image x:Name="imageSplash" Grid.Row="1" Stretch="Uniform" MaxWidth="600" Source="ms-appx:///Assets/SplashScreen.png"/>
+
+        <TextBlock Grid.Row="2" Margin="4">
+            <Hyperlink NavigateUri="mailto:pinoelefante@hotmail.it?subject=Adventure's Planet UWP">
+                <Run Text="Contatta lo sviluppatore"/>
+            </Hyperlink>
+        </TextBlock>
+
+        <TextBlock Grid.Row="3" Margin="4">
+            <Hyperlink NavigateUri="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=pino%2eelefante%40hotmail%2eit&amp;lc=IT&amp;item_name=AdventuresPlanetApp&amp;item_number=APA&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">
+                <Run Text="Fai una donazione"/>
+            </Hyperlink>
+        </TextBlock>
+
+        <TextBlock Grid.Row="4" Margin="4">
+            <Hyperlink NavigateUri="ms-windows-store://review/?ProductId=9NBLGGH4XZHB">
+                <Run Text="Vota l'applicazione"/>
+            </Hyperlink>
+        </TextBlock>
+
+        <TextBlock Grid.Row="5" Margin="4">
+            <Hyperlink NavigateUri="http://www.adventuresplanet.it">
+                <Run Text="Vai al sito web"/>
+            </Hyperlink>
+        </TextBlock>
+
+        <TextBlock Grid.Row="6" Margin="4" TextWrapping="Wrap" FontSize="12"
+                   Text="Applicazione sviluppata da Giuseppe Elefante. Tutto il materiale presente è proprietà di Adventure's Planet s.r.l."/>
+
+        <TextBlock Grid.Row="7" Margin="4" HorizontalAlignment="Right" Text="{Binding VersioneApp}"/>
+    </Grid>
+</Page>

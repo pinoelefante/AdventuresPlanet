@@ -99,6 +99,8 @@ namespace Tasks
                 };
                 var xmlToast = toast.GetXml();
                 var notification = new ToastNotification(xmlToast);
+                notification.Tag = item.Id.ToString();
+                notification.Group = "newsGroup";
                 ToastNotificationManager.CreateToastNotifier().Show(notification);
             }
         }

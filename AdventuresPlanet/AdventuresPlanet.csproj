@@ -108,6 +108,7 @@
     <Compile Include="ViewModels\DownloadPageViewModel.cs" />
     <Compile Include="ViewModels\GalleriaPageViewModel.cs" />
     <Compile Include="ViewModels\ImageViewerViewModel.cs" />
+    <Compile Include="ViewModels\InfoViewModel.cs" />
     <Compile Include="ViewModels\NewsPageViewModel.cs" />
     <Compile Include="ViewModels\PodcastPageViewModel.cs" />
     <Compile Include="ViewModels\PreferitiViewModel.cs" />
@@ -126,6 +127,9 @@
     </Compile>
     <Compile Include="Views\ImageViewerPage.xaml.cs">
       <DependentUpon>ImageViewerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InfoPage.xaml.cs">
+      <DependentUpon>InfoPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewsPage.xaml.cs">
       <DependentUpon>NewsPage.xaml</DependentUpon>
@@ -212,6 +216,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ImageViewerPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\InfoPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

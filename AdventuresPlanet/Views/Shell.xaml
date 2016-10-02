@@ -63,6 +63,13 @@
                     <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Download"/>
                 </StackPanel>
             </Controls:HamburgerButtonInfo>
+
+            <Controls:HamburgerButtonInfo PageType="views:InfoPage">
+                <StackPanel Orientation="Horizontal">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE897;" Width="48" Height="48"/>
+                    <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Info"/>
+                </StackPanel>
+            </Controls:HamburgerButtonInfo>
         </Controls:HamburgerMenu.SecondaryButtons>
     </Controls:HamburgerMenu>
 

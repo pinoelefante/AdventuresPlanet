@@ -35,6 +35,7 @@ namespace AdventuresPlanet.ViewModels
             SimpleIoc.Default.Register<PreferitiViewModel>();
             SimpleIoc.Default.Register<DownloadPageViewModel>();
             SimpleIoc.Default.Register<SagaViewModel>();
+            SimpleIoc.Default.Register<InfoViewModel>();
             #endregion
         }
         public NewsPageViewModel NewsPageVM
@@ -76,6 +77,10 @@ namespace AdventuresPlanet.ViewModels
         public SagaViewModel SagaVM
         {
             get { return SimpleIoc.Default.GetInstance<SagaViewModel>(); }
+        }
+        public InfoViewModel InfoVM
+        {
+            get { return SimpleIoc.Default.GetInstance<InfoViewModel>(); }
         }
     }
 }

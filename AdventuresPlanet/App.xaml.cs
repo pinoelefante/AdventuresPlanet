@@ -16,6 +16,7 @@ using Utils;
 using AdventuresPlanetRuntime.Data;
 using Windows.System;
 using AdventuresPlanet.Views;
+using Windows.UI.Notifications;
 
 namespace AdventuresPlanet
 {
@@ -73,7 +74,7 @@ namespace AdventuresPlanet
             ApplicationView.GetForCurrentView().TryEnterFullScreenMode();
 #endif
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            if(args is ToastNotificationActivatedEventArgs)
+            if (args is ToastNotificationActivatedEventArgs)
             {
                 var argsToast = args as ToastNotificationActivatedEventArgs;
                 ManageToastLaunch(argsToast);
