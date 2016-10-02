@@ -426,7 +426,7 @@ namespace AdventuresPlanet.ViewModels
                     IsRecensioneDownload = true;
                 });
                 if (!await manager.LoadRecensione(RecensioneSelezionata))
-                    new MessageDialog("Si è verificato un errore durante il caricamento della recensione").ShowAsync();
+                    await new MessageDialog("Si è verificato un errore durante il caricamento della recensione").ShowAsync();
                 else
                     db.Update(RecensioneSelezionata);
                 WindowWrapper.Current().Dispatcher.Dispatch(() =>

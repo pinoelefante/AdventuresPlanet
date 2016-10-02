@@ -21,6 +21,7 @@ namespace AdventuresPlanet.ViewModels
             SimpleIoc.Default.Register<AVPDatabase>();
             SimpleIoc.Default.Register<AVPPreferiti>();
             SimpleIoc.Default.Register<DownloadService>();
+            SimpleIoc.Default.Register<SettingsService>();
             #endregion
 
             #region ViewModels

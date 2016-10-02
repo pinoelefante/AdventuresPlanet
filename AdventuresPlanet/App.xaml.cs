@@ -14,6 +14,8 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Utils;
 using AdventuresPlanetRuntime.Data;
+using Windows.System;
+using AdventuresPlanet.Views;
 
 namespace AdventuresPlanet
 {
@@ -23,6 +25,7 @@ namespace AdventuresPlanet
     [Bindable]
     sealed partial class App : Template10.Common.BootStrapper
     {
+        public readonly static string StoreId = "9NBLGGH4XZHB";
         public App()
         {
             InitializeComponent();
@@ -78,6 +81,23 @@ namespace AdventuresPlanet
             else
                 NavigationService.Navigate(typeof(Views.NewsPage));
             await Task.CompletedTask;
+        }
+        private static MessageDialog votaDialog = null;
+        public static async void VotaApplicazione(Services.SettingsService settings)
+        {
+            if (votaDialog == null)
+            {
+                votaDialog = new MessageDialog("", "Vota applicazione") { CancelCommandIndex = 1, DefaultCommandIndex = 0 };
+                votaDialog.Commands.Add(new UICommand("Vota", async (x) =>
+                {
+                    Busy.SetBusy(true, "");
+                    await Launcher.LaunchUriAsync(new Uri($"ms-windows-store://review/?ProductId={App.StoreId}"));
+                    settings.IsAppVoted = true;
+                    Busy.SetBusy(false, "");
+                }));
+                votaDialog.Commands.Add(new UICommand("Non ora"));
+            }
+            await votaDialog.ShowAsync();
         }
         private void ManageToastLaunch(ToastNotificationActivatedEventArgs toast)
         {

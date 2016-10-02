@@ -26,6 +26,8 @@ using Utils;
 using NotificationsExtensions.Toasts;
 using Windows.UI.Notifications;
 using System.Net;
+using System.Diagnostics;
+using AdventuresPlanet.Services;
 
 namespace AdventuresPlanet.ViewModels
 {
@@ -33,11 +35,15 @@ namespace AdventuresPlanet.ViewModels
     {
         private AVPManager manager;
         private AVPDatabase db;
-        public NewsPageViewModel(AVPManager avp, AVPDatabase d)
+        private SettingsService settings;
+        public NewsPageViewModel(AVPManager avp, AVPDatabase d, SettingsService s)
         {
             manager = avp;
             db = d;
+            settings = s;
             ListaNews = new NewsCollection(manager, db);
+            settings.NumeroAvvii++;
+            VotaApplicazione();
         }
         private DataTransferManager _dataTransferManager;
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
@@ -88,13 +94,16 @@ namespace AdventuresPlanet.ViewModels
                 NewsSelezionata = null;
             else
             {
-                if (CloseDialog == null)
+                if (settings.ChiediChiusuraApp)
                 {
-                    CloseDialog = new MessageDialog("Vuoi uscire dall'applicazione?") { CancelCommandIndex = 1, DefaultCommandIndex = 1 };
-                    CloseDialog.Commands.Add(new UICommand("Si", (c) => { App.Current.Exit(); }));
-                    CloseDialog.Commands.Add(new UICommand("No"));
+                    if (CloseDialog == null)
+                    {
+                        CloseDialog = new MessageDialog("Vuoi uscire dall'applicazione?", "Chiusura applicazione") { CancelCommandIndex = 1, DefaultCommandIndex = 1 };
+                        CloseDialog.Commands.Add(new UICommand("Si", (c) => { App.Current.Exit(); }));
+                        CloseDialog.Commands.Add(new UICommand("No"));
+                    }
+                    await CloseDialog.ShowAsync();
                 }
-                await CloseDialog.ShowAsync();
             }
         }
         private DelegateCommand _shareCmd, _openInBrowserCmd;
@@ -282,6 +291,12 @@ namespace AdventuresPlanet.ViewModels
             }
             else
                 await new MessageDialog("News vuota").ShowAsync();
+        }
+        
+        private void VotaApplicazione()
+        {
+            if (!settings.IsAppVoted && settings.NumeroAvvii % 5 == 0)
+                App.VotaApplicazione(settings);
         }
         public class NewsCollection : ObservableCollection<News>, ISupportIncrementalLoading
         {
