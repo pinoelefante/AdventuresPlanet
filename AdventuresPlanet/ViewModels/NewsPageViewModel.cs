@@ -249,8 +249,15 @@ namespace AdventuresPlanet.ViewModels
                             }
                             else if (AVPManager.IsGalleriaImmagini(link))
                                 NavigationService.Navigate(typeof(GalleriePage), link);
-                            else if (AVPManager.IsTrailer(link) || AVPManager.IsExtra(link) || UrlUtils.IsDomain(link, "youtube.com"))
+                            else if (AVPManager.IsTrailer(link) || UrlUtils.IsDomain(link, "youtube.com"))
                                 NavigationService.Navigate(typeof(VideoPlayerPage), link);
+                            else if (AVPManager.IsExtra(link))
+                            {
+                                if(UrlUtils.UrlHasParameter(link, "cont"))
+                                    NavigationService.Navigate(typeof(VideoPlayerPage), link);
+                                else
+                                    NavigationService.Navigate(typeof(ExtraPage), link);
+                            }
                             else if (AVPManager.IsSaga(link))
                                 NavigationService.Navigate(typeof(SagaPage), link);
                             else
@@ -301,6 +308,11 @@ namespace AdventuresPlanet.ViewModels
             if (!settings.IsAppVoted && settings.NumeroAvvii % 5 == 0)
                 App.VotaApplicazione(settings);
         }
+        public DelegateCommand TestCommand =>
+            new DelegateCommand(async () =>
+            {
+                await manager.LoadExtra("http://www.adventuresplanet.it/scheda_extra.php?game=yesterdayorigins");
+            });
         public class NewsCollection : ObservableCollection<News>, ISupportIncrementalLoading
         {
             private bool _loading;

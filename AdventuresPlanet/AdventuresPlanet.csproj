@@ -106,6 +106,7 @@
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="ViewModels\BrowserVideoPlayerViewModel.cs" />
     <Compile Include="ViewModels\DownloadPageViewModel.cs" />
+    <Compile Include="ViewModels\ExtraViewModel.cs" />
     <Compile Include="ViewModels\GalleriaPageViewModel.cs" />
     <Compile Include="ViewModels\ImageViewerViewModel.cs" />
     <Compile Include="ViewModels\InfoViewModel.cs" />
@@ -122,6 +123,9 @@
     </Compile>
     <Compile Include="Views\DownloadPage.xaml.cs">
       <DependentUpon>DownloadPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ExtraPage.xaml.cs">
+      <DependentUpon>ExtraPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GalleriePage.xaml.cs">
       <DependentUpon>GalleriePage.xaml</DependentUpon>
@@ -215,6 +219,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\DownloadPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ExtraPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

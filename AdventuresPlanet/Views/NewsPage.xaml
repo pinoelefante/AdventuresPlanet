@@ -92,7 +92,9 @@
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
                     </AppBarButton.Icon>
                 </AppBarButton>
-                
+                <!--
+                <AppBarButton Label="Test" Icon="Account" Command="{Binding TestCommand}"/>
+                -->
             </controls:PageHeader.PrimaryCommands>
         </controls:PageHeader>
 

@@ -244,7 +244,7 @@ namespace AdventuresPlanetRuntime
                 doc.LoadHtml(response);
                 RecensioneItem rec = new RecensioneItem() { Link = rec_link.Replace(URL_BASE, "") };
 
-                rec.Titolo = doc.GetElementbyId("scheda_text").Descendants("h1")?.ElementAt(0).InnerText.Trim();
+                rec.Titolo = WebUtility.HtmlDecode(doc.GetElementbyId("scheda_text").Descendants("h1")?.ElementAt(0).InnerText.Trim());
                 rec.Id = UrlUtils.GetUrlParameterValue(rec_link, "game");
                 HtmlNode rec_s = doc.GetElementbyId("scheda_breve");
                 if (rec_s != null)
@@ -402,6 +402,30 @@ namespace AdventuresPlanetRuntime
             AddAction?.Invoke(gall.list);
             SaveAction?.Invoke(gall.list);
             return gall.time;
+        }
+        public async Task<List<KeyValuePair<string, string>>> LoadExtra(string url)
+        {
+            try
+            {
+                var content = await GetStringAsync(url);
+                HtmlDocument doc = new HtmlDocument();
+                doc.LoadHtml(content);
+                HtmlNode mainNode = doc.GetElementbyId("scheda_completa");
+                var links = mainNode.Descendants("a");
+                List<KeyValuePair<string, string>> results = new List<KeyValuePair<string, string>>(links.Count());
+                foreach (var item in links)
+                {
+                    var link = WebUtility.HtmlDecode(item.Attributes["href"].Value);
+                    var title = WebUtility.HtmlDecode(item.InnerText.Trim());
+                    results.Add(new KeyValuePair<string, string>(title, link));
+                }
+                return results;
+            }
+            catch (Exception)
+            {
+
+            }
+            return null;
         }
         public async Task LoadGalleria(GalleriaItem galleria, Action<string, AdvImage> AddAction)
         {

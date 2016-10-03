@@ -102,7 +102,7 @@ namespace AdventuresPlanet
         }
         private void ManageToastLaunch(ToastNotificationActivatedEventArgs toast)
         {
-            var parameters = UrlUtils.GetUrlParameters(toast.Argument);
+            var parameters = UrlUtils.GetUrlParameters(toast.Argument, true);
             switch (parameters["action"])
             {
                 case "viewNews":

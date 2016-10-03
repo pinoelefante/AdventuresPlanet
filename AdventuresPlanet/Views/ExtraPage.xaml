@@ -1,0 +1,41 @@
+﻿<Page x:Name="page"
+    x:Class="AdventuresPlanet.Views.ExtraPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:AdventuresPlanet.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:controls="using:Template10.Controls"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    DataContext="{Binding ExtraVM, Source={StaticResource Locator}}">
+
+    <Page.Resources>
+        <DataTemplate x:Key="extraItem">
+            <StackPanel>
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Tapped">
+                        <core:InvokeCommandAction Command="{Binding DataContext.ExtraSelectedCmd, ElementName=page}" CommandParameter="{Binding}"/>
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+                <TextBlock Text="{Binding Key}"/>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:PageHeader />
+        <ProgressRing Grid.Row="1" IsActive="{Binding IsExtraLoading}" Width="100" Height="100" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.ZIndex="10" Visibility="{Binding IsExtraLoading, Converter={StaticResource BoolVisibility}}"/>
+        <ListView Grid.Row="1" ItemTemplate="{StaticResource extraItem}" ItemsSource="{Binding ListaExtra}">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </Grid>
+</Page>

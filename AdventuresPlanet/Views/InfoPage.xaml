@@ -22,7 +22,7 @@
         </Grid.RowDefinitions>
         <!--<controls:PageHeader />-->
 
-        <Image x:Name="imageSplash" Grid.Row="1" Stretch="Uniform" MaxWidth="600" Source="ms-appx:///Assets/SplashScreen.png"/>
+        <Image x:Name="imageSplash" Grid.Row="1" Stretch="Uniform" MaxWidth="600" Source="ms-appx:///Assets/SplashScreen.png" Tapped="imageSplashTapped"/>
 
         <TextBlock Grid.Row="2" Margin="4">
             <Hyperlink NavigateUri="mailto:pinoelefante@hotmail.it?subject=Adventure's Planet UWP">
@@ -31,14 +31,14 @@
         </TextBlock>
 
         <TextBlock Grid.Row="3" Margin="4">
-            <Hyperlink NavigateUri="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=pino%2eelefante%40hotmail%2eit&amp;lc=IT&amp;item_name=AdventuresPlanetApp&amp;item_number=APA&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">
-                <Run Text="Fai una donazione"/>
+            <Hyperlink NavigateUri="ms-windows-store://review/?ProductId=9NBLGGH4XZHB">
+                <Run Text="Vota l'applicazione"/>
             </Hyperlink>
         </TextBlock>
 
         <TextBlock Grid.Row="4" Margin="4">
-            <Hyperlink NavigateUri="ms-windows-store://review/?ProductId=9NBLGGH4XZHB">
-                <Run Text="Vota l'applicazione"/>
+            <Hyperlink NavigateUri="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&amp;business=pino%2eelefante%40hotmail%2eit&amp;lc=IT&amp;item_name=AdventuresPlanetApp&amp;item_number=APA&amp;currency_code=EUR&amp;bn=PP%2dDonationsBF%3abtn_donate_LG%2egif%3aNonHosted">
+                <Run Text="Fai una donazione"/>
             </Hyperlink>
         </TextBlock>
 
