@@ -108,7 +108,7 @@ namespace AdventuresPlanet.ViewModels
                     App.Current.Exit();
             }
         }
-        private DelegateCommand _shareCmd, _openInBrowserCmd;
+        private DelegateCommand _shareCmd, _openInBrowserCmd, _aggiornaNewsCmd;
         public DelegateCommand ShareCommand =>
             _shareCmd ??
             (_shareCmd = new DelegateCommand(() =>
@@ -120,6 +120,14 @@ namespace AdventuresPlanet.ViewModels
             (_openInBrowserCmd = new DelegateCommand(async () =>
             {
                 await Launcher.LaunchUriAsync(new Uri(NewsSelezionata.Link));
+            }));
+        public DelegateCommand AggiornaNewsCommand =>
+            _aggiornaNewsCmd ??
+            (_aggiornaNewsCmd = new DelegateCommand(() =>
+            {
+                NewsSelezionata.TestoRichString = string.Empty;
+                NewsSelezionata.CorpoNews = string.Empty;
+                NewsSelezionata = NewsSelezionata;
             }));
         public NewsCollection ListaNews { get; private set; }
         private DelegateCommand<News> _selezionaNews;

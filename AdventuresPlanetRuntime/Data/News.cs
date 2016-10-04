@@ -36,9 +36,10 @@ namespace AdventuresPlanetRuntime.Data
             }
             set
             {
+                TestoRich?.Clear();
                 if (!string.IsNullOrEmpty(value))
                 {
-                    var s = new string[] {"||"};
+                    var s = new string[] { "||" };
                     var kv = value.Split(s, StringSplitOptions.RemoveEmptyEntries);
                     TestoRich = new List<string>(kv.Length);
                     foreach (var item in kv)

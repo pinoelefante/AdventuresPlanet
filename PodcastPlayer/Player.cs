@@ -58,7 +58,6 @@ namespace PodcastPlayer
 
         private void TaskInstance_Canceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
-            DefaultLiveTile();
             deferral.Complete();
         }
         private int PositionRecover;
@@ -219,7 +218,7 @@ namespace PodcastPlayer
                         {
                             Children =
                             {
-                                new TileText() { Text = title, Style = TileTextStyle.Subtitle, Wrap = true }
+                                new TileText() { Text = title, Style = TileTextStyle.Subtitle, Wrap = true, MaxLines = 3 }
                             }
                         }
                     },

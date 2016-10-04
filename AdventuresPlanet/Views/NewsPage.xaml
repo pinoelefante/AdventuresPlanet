@@ -92,6 +92,7 @@
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE72D;"/>
                     </AppBarButton.Icon>
                 </AppBarButton>
+                <AppBarButton Label="Aggiorna news" Icon="Refresh" Foreground="White" Command="{Binding AggiornaNewsCommand}" Visibility="{Binding IsNewsSelezionata, Converter={StaticResource BoolVisibility}}" IsEnabled="{Binding IsCaricaNews, Converter={StaticResource NotBool}}"/>
                 <!--
                 <AppBarButton Label="Test" Icon="Account" Command="{Binding TestCommand}"/>
                 -->

@@ -116,9 +116,10 @@ namespace Tasks
                     {
                         Content = new TileBindingContentAdaptive()
                         {
-                            BackgroundImage = new TileBackgroundImage()
+                            BackgroundImage = new TileBackgroundImage() { Source = new TileImageSource(item.Immagine) },
+                            Children =
                             {
-                                Source = new TileImageSource(item.Immagine)
+                                new TileText() { Text = item.Titolo, Style = TileTextStyle.Body, Wrap = true, MaxLines = 3, Align = TileTextAlign.Auto }
                             }
                         }
                     },
@@ -130,7 +131,7 @@ namespace Tasks
                             BackgroundImage = new TileBackgroundImage() { Source = new TileImageSource(item.Immagine) },
                             Children =
                             {
-                                new TileText() { Text = item.Titolo, Style = TileTextStyle.Subtitle, Wrap = true, MaxLines = 2, Align = TileTextAlign.Auto }
+                                new TileText() { Text = item.Titolo, Style = TileTextStyle.Subtitle, Wrap = true, MaxLines = 3, Align = TileTextAlign.Auto }
                             }
                         }
                     },
@@ -139,10 +140,7 @@ namespace Tasks
                     {
                         Content = new TileBindingContentAdaptive()
                         {
-                            Children =
-                            {
-                                new TileImage() { Source = new TileImageSource(item.Immagine), RemoveMargin = true }
-                            }
+                            BackgroundImage = new TileBackgroundImage() { Source = new TileImageSource(item.Immagine) }
                         }
                     }
                 }
