@@ -15,7 +15,7 @@ namespace Utils
         {
             string query = string.Empty;
             Dictionary<string, string> parameters = null;
-            link = WebUtility.UrlDecode(link);
+            link = WebUtility.HtmlDecode(link);
             if (isQuery)
                 query = link;
             else
