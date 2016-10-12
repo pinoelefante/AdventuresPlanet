@@ -30,6 +30,7 @@ namespace AdventuresPlanet.ViewModels
             if ((mode == NavigationMode.New || mode == NavigationMode.Refresh) && parameter != null)
             {
                 ElencoVideo.Clear();
+                TubecastLaunched = false;
                 if (parameter is SoluzioneItem)
                 {
                     var sol = parameter as SoluzioneItem;
@@ -73,13 +74,9 @@ namespace AdventuresPlanet.ViewModels
                     {
                         var videoId = UrlUtils.GetUrlParameterValue(link, "v");
                         if (!string.IsNullOrEmpty(videoId))
-                        {
                             ElencoVideo.Add($"https://www.youtube.com/embed/{videoId}");
-                        }
                         else
-                        {
                             await new MessageDialog("Si è verificato un errore").ShowAsync();
-                        }
                     }
                     else
                     {
@@ -112,12 +109,14 @@ namespace AdventuresPlanet.ViewModels
                     {
                         var uri = new Uri($"tubecast:link={ElencoVideo[0]}");
                         if (await Launcher.QueryUriSupportAsync(uri, LaunchQuerySupportType.Uri) == LaunchQuerySupportStatus.Available)
+                        {
+                            TubecastLaunched = true;
                             await Launcher.LaunchUriAsync(uri);
+                        }
                     }
-                    else
+                    if(!TubecastLaunched)
                         CurrentVideo = 0;
                 }
-                    
             }
             IsLoading = false;
         }
@@ -127,13 +126,13 @@ namespace AdventuresPlanet.ViewModels
             WebSource = null;
             return base.OnNavigatedFromAsync(pageState, suspending);
         }
-        private bool _isLoading;
+        private bool _isLoading, _tubecastLaunched, _hasPrev, _hasNext;
+        public bool TubecastLaunched { get { return _tubecastLaunched; } set { Set(ref _tubecastLaunched, value); } }
         public bool IsLoading { get { return _isLoading; } set { Set(ref _isLoading, value); } }
         public bool ShowCommands { get { return ElencoVideo.Count > 1; } }
         private string _webSource;
         public string WebSource { get { return _webSource; } set { Set(ref _webSource, value); } }
         public ObservableCollection<string> ElencoVideo { get; } = new ObservableCollection<string>();
-        private bool _hasPrev, _hasNext;
         public bool HasPrev { get { return _hasPrev; } set { Set(ref _hasPrev, value); } }
         public bool HasNext { get { return _hasNext; } set { Set(ref _hasNext, value); } }
         private int _currVideo;
@@ -149,7 +148,7 @@ namespace AdventuresPlanet.ViewModels
                     WebSource = ElencoVideo[value];
             }
         }
-        private DelegateCommand _nextCmd, _prevCmd;
+        private DelegateCommand _nextCmd, _prevCmd, _openHereCmd;
         public DelegateCommand NextCommand =>
             _nextCmd ??
             (_nextCmd = new DelegateCommand(() =>
@@ -163,6 +162,16 @@ namespace AdventuresPlanet.ViewModels
             {
                 if (HasPrev)
                     CurrentVideo--;
+            }));
+        public DelegateCommand OpenVideoHereCmd =>
+            _openHereCmd ??
+            (_openHereCmd = new DelegateCommand(() =>
+            {
+                if (ElencoVideo.Any())
+                {
+                    TubecastLaunched = false;
+                    CurrentVideo = 0;
+                }
             }));
     }
 }

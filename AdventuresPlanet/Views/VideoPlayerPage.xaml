@@ -31,6 +31,11 @@
                  Source="{Binding WebSource}"
                  MinWidth="300"
                  MinHeight="300" />
+        <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="{Binding TubecastLaunched, Converter={StaticResource BoolVisibility}}">
+            <TextBlock Text="Il video è stato avviato con Tubecast"  TextWrapping="Wrap" />
+            <Button Content="Apri qui" HorizontalAlignment="Center" Command="{Binding OpenVideoHereCmd}" Margin="0,8"/>
+        </StackPanel>
+        
         <CommandBar Grid.Row="2" Visibility="{Binding ShowCommands, Converter={StaticResource BoolVisibility}}">
             <AppBarButton Label="Precedente" Icon="Previous" IsEnabled="{Binding HasPrev}" HorizontalAlignment="Center"/>
             <AppBarButton Label="Successivo" Icon="Next" IsEnabled="{Binding HasNext}" HorizontalAlignment="Center"/>
