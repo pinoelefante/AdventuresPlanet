@@ -198,6 +198,7 @@ namespace AdventuresPlanet.ViewModels
             }
         }
         public ObservableCollection<FrameworkElement> ListComponents { get; } = new ObservableCollection<FrameworkElement>();
+        private MessageDialog dialogNewsError = null;
         private async void componiNews()
         {
             ListComponents.Clear();
@@ -250,7 +251,7 @@ namespace AdventuresPlanet.ViewModels
                                 NavigationService.Navigate(typeof(RecensioniPage), link);
                             else if (AVPManager.IsPodcast(link))
                             {
-                                if(link.Equals(AVPManager.URL_BASE + "podcast.php"))
+                                if (link.Equals(AVPManager.URL_BASE + "podcast.php"))
                                     NavigationService.Navigate(typeof(PodcastPage));
                                 else
                                     NavigationService.Navigate(typeof(PodcastPage), link);
@@ -261,7 +262,7 @@ namespace AdventuresPlanet.ViewModels
                                 NavigationService.Navigate(typeof(VideoPlayerPage), link);
                             else if (AVPManager.IsExtra(link))
                             {
-                                if(UrlUtils.UrlHasParameter(link, "cont"))
+                                if (UrlUtils.UrlHasParameter(link, "cont"))
                                     NavigationService.Navigate(typeof(VideoPlayerPage), link);
                                 else
                                     NavigationService.Navigate(typeof(ExtraPage), link);
@@ -308,7 +309,22 @@ namespace AdventuresPlanet.ViewModels
                 ListComponents.Add(tCorpo);
             }
             else
-                await new MessageDialog("News vuota").ShowAsync();
+            {
+                if(dialogNewsError == null)
+                {
+                    dialogNewsError = new MessageDialog("Non è stato possibile recuperare la news", "Errore")
+                    {
+                        CancelCommandIndex = 1,
+                        DefaultCommandIndex = 0
+                    };
+                    dialogNewsError.Commands.Add(new UICommand("Riprova", (x => 
+                    {
+                        AggiornaNewsCommand.Execute();
+                    })));
+                    dialogNewsError.Commands.Add(new UICommand("Chiudi"));
+                }
+                await dialogNewsError.ShowAsync();
+            }
         }
         
         private void VotaApplicazione()
