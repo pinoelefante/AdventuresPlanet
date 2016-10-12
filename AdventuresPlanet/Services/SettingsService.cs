@@ -36,6 +36,11 @@ namespace AdventuresPlanet.Services
             get { return GetRoaming<bool>("is_ask_close", true); }
             set { SetRoaming("is_ask_close", value); }
         }
+        public bool VideoTubecast
+        {
+            get { return GetRoaming<bool>("video_tubecast"); }
+            set { SetRoaming("video_tubecast", value); }
+        }
         private void SetLocal<T>(string key, T value, [CallerMemberName]string caller = "")
         {
             local.Values[key] = value;

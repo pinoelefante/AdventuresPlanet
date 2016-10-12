@@ -23,8 +23,10 @@ namespace AdventuresPlanetRuntime
         private Windows.Web.Http.HttpClient jsonClient;
         public AVPManager()
         {
-            //this.DefaultRequestHeaders.Add("User-Agent", "Adventure's Planet UWP");
-            BaseAddress = new Uri(URL_BASE);
+            this.Timeout = TimeSpan.FromSeconds(15);
+            this.DefaultRequestHeaders.Add("User-Agent", "Adventure's Planet UWP");
+            this.BaseAddress = new Uri(URL_BASE);
+
             HttpBaseProtocolFilter filter = new HttpBaseProtocolFilter();
             filter.AutomaticDecompression = true;
             jsonClient = new Windows.Web.Http.HttpClient(filter);

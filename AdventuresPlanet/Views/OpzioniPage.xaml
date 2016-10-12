@@ -12,6 +12,7 @@
     <ScrollViewer HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Hidden" VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
             <ToggleSwitch Header="Chiedi conferma alla chiusura dell'app" IsOn="{Binding Settings.ChiediChiusuraApp, Mode=TwoWay}"/>
+            <ToggleSwitch Header="Apri video di YouTube in Tubecast" IsOn="{Binding Settings.VideoTubecast, Mode=TwoWay}"/>
         </StackPanel>
     </ScrollViewer>
 </Page>

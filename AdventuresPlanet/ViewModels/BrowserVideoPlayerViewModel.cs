@@ -1,4 +1,5 @@
-﻿using AdventuresPlanetRuntime;
+﻿using AdventuresPlanet.Services;
+using AdventuresPlanetRuntime;
 using AdventuresPlanetRuntime.Data;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
 using Utils;
+using Windows.System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Navigation;
 
@@ -16,15 +18,18 @@ namespace AdventuresPlanet.ViewModels
     public class BrowserVideoPlayerViewModel : ViewModelBase
     {
         private AVPManager manager;
-        public BrowserVideoPlayerViewModel(AVPManager m)
+        private SettingsService settings;
+        public BrowserVideoPlayerViewModel(AVPManager m, SettingsService s)
         {
             manager = m;
+            settings = s;
         }
         public override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, IDictionary<string, object> state)
         {
             IsLoading = true;
-            if (parameter != null)
+            if ((mode == NavigationMode.New || mode == NavigationMode.Refresh) && parameter != null)
             {
+                ElencoVideo.Clear();
                 if (parameter is SoluzioneItem)
                 {
                     var sol = parameter as SoluzioneItem;
@@ -40,8 +45,6 @@ namespace AdventuresPlanet.ViewModels
                                 ElencoVideo.Add(videosrc);
                             }
                         }
-                        if (ElencoVideo.Any())
-                            CurrentVideo = 0;
                     }
                 }
                 else if (parameter is RecensioneItem)
@@ -59,8 +62,7 @@ namespace AdventuresPlanet.ViewModels
                                 ElencoVideo.Add(videosrc);
                             }
                         }
-                        if (ElencoVideo.Any())
-                            CurrentVideo = 0;
+                        
                     }
                 }
                 else if(parameter is string)
@@ -97,8 +99,6 @@ namespace AdventuresPlanet.ViewModels
                                     ElencoVideo.Add(videosrc);
                                 }
                             }
-                            if (ElencoVideo.Any())
-                                CurrentVideo = 0;
                         }
                         else
                         {
@@ -106,6 +106,18 @@ namespace AdventuresPlanet.ViewModels
                         }
                     }
                 }
+                if (ElencoVideo.Any())
+                {
+                    if (settings.VideoTubecast)
+                    {
+                        var uri = new Uri($"tubecast:link={ElencoVideo[0]}");
+                        if (await Launcher.QueryUriSupportAsync(uri, LaunchQuerySupportType.Uri) == LaunchQuerySupportStatus.Available)
+                            await Launcher.LaunchUriAsync(uri);
+                    }
+                    else
+                        CurrentVideo = 0;
+                }
+                    
             }
             IsLoading = false;
         }
