@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Template10.Mvvm;
@@ -107,11 +108,11 @@ namespace AdventuresPlanet.ViewModels
                 {
                     if (settings.VideoTubecast)
                     {
-                        var uri = new Uri($"tubecast:link={ElencoVideo[0]}");
+                        var uri = new Uri($"tubecast:link={WebUtility.UrlEncode(ElencoVideo[0])}");
                         if (await Launcher.QueryUriSupportAsync(uri, LaunchQuerySupportType.Uri) == LaunchQuerySupportStatus.Available)
                         {
                             TubecastLaunched = true;
-                            await Launcher.LaunchUriAsync(uri);
+                            OpenTubecast(ElencoVideo[0]);
                         }
                     }
                     if(!TubecastLaunched)
@@ -173,5 +174,29 @@ namespace AdventuresPlanet.ViewModels
                     CurrentVideo = 0;
                 }
             }));
+        private void OpenTubecast(string link)
+        {
+            if (UrlUtils.UrlHasParameter(link, "list"))
+                OpenPlaylistTubecast(UrlUtils.GetUrlParameterValue(link, "list"));
+            else if (UrlUtils.UrlHasParameter(link, "v"))
+                OpenVideoTubecast(UrlUtils.GetUrlParameterValue(link, "v"));
+            else
+                OpenLinkTubecast(link);
+        }
+        private async void OpenPlaylistTubecast(string playlistId)
+        {
+            var url = $"tubecast:PlaylistID={playlistId}";
+            await Launcher.LaunchUriAsync(new Uri(url));
+        }
+        private async void OpenVideoTubecast(string videoId)
+        {
+            var url = $"tubecast:VideoID={videoId}";
+            await Launcher.LaunchUriAsync(new Uri(url));
+        }
+        private async void OpenLinkTubecast(string link)
+        {
+            var url = $"tubecast:link={WebUtility.UrlEncode(link)}";
+            await Launcher.LaunchUriAsync(new Uri(url));
+        }
     }
 }
