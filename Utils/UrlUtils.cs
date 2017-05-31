@@ -13,13 +13,16 @@ namespace Utils
         private readonly static char[] EqualSplit = new char[] { '=' };
         public static Dictionary<string, string> GetUrlParameters(string link, bool isQuery = false)
         {
-            string query = string.Empty;
+            string query = link;
             Dictionary<string, string> parameters = null;
             link = WebUtility.HtmlDecode(link);
-            if (isQuery)
-                query = link;
-            else
-                query = link.Substring(link.IndexOf("?") + 1);
+            if (!isQuery)
+            {
+                if (link.Contains("?"))
+                    query = link.Substring(link.IndexOf("?") + 1);
+                else
+                    return new Dictionary<string, string>(1);
+            }
             var res = query.Split(AmpersandSplit, StringSplitOptions.RemoveEmptyEntries);
             parameters = new Dictionary<string, string>(res.Length);
             foreach (var item in res)
