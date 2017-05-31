@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="276edb41-5559-436e-b93e-8ab29b5ff2a0" Publisher="CN=pinoe" Version="1.0.0.0" />
-  <mp:PhoneIdentity PhoneProductId="276edb41-5559-436e-b93e-8ab29b5ff2a0" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="28069pinoelefante.AdventuresPlanet" Publisher="CN=91875298-DE48-43C6-B1C0-A6D3351D7095" Version="1.0.0.0" />
+  <mp:PhoneIdentity PhoneProductId="a81dde2d-cb0b-471d-b5b9-d06f704963dc" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>AdventuresPlanet</DisplayName>
-    <PublisherDisplayName>pinoe</PublisherDisplayName>
+    <DisplayName>Adventure's Planet</DisplayName>
+    <PublisherDisplayName>pinoelefante</PublisherDisplayName>
     <Logo>Assets\Store.png</Logo>
   </Properties>
   <Dependencies>

@@ -243,3 +243,7 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+*/Package.StoreAssociation.xml
+*/*.pfx
+*/*.appx
+*/_pkginfo.txt
